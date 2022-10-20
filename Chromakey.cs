@@ -26,16 +26,18 @@ namespace Chromakey2022
 
         public Chromakey()
         {
-            VideoCapture cap = new VideoCapture();
-            cntCam = 0;
-            while (true)    //カメラ接続台数確認
+            using (VideoCapture cap = new VideoCapture())
             {
-                cap.Open(cntCam);
-                if (cap.IsOpened() == false)
+                cntCam = 0;
+                while (true)    //カメラ接続台数確認
                 {
-                    break;
+                    cap.Open(cntCam);
+                    if (cap.IsOpened() == false)
+                    {
+                        break;
+                    }
+                    cntCam++;
                 }
-                cntCam++;
             }
         }
 
@@ -98,13 +100,14 @@ namespace Chromakey2022
                 }
             }
 
-            Mat src_img = new Mat(); //カメラ画像
-            Mat mask = new Mat(); //マスク画像（緑部分を黒、それ以外を白）
-            Mat comp; //背景画像
-            Mat img = new Mat(); //
-            Mat flipImg = new Mat(); //
             while (flgRun)
             {
+                Mat src_img = new Mat(); //カメラ画像
+                Mat mask = new Mat(); //マスク画像（緑部分を黒、それ以外を白）
+                Mat comp; //背景画像
+                Mat img = new Mat(); //最終的に表示する画像
+                Mat flipImg = new Mat(); //最終的に表示する反転画像
+
                 //カメラからフレームを取得
                 cap1.Read(src_img);
                 cap2.Read(temp);
@@ -132,19 +135,22 @@ namespace Chromakey2022
 
                 Cv2.WaitKey(30);
 
-                src_img2.Release();
+                src_img.Dispose();
+                mask.Dispose();
+                comp.Dispose();
+                img.Dispose();
+                flipImg.Dispose();
+                src_img2.Dispose();
+                mat.Dispose();
             }
-
-            src_img.Release();
-            mask.Release();
-            cap1.Release(); cap2.Release();
+            cap1.Dispose();
+            cap2.Dispose();
         }
 
         private Mat setMask(Mat src_img)
         {
             Mat temp = src_img.Clone();
             Mat img = new Mat(480, 640, MatType.CV_8UC3, new Scalar(255, 255, 255));
-            //img = Scalar(255, 255, 255);
             Cv2.MedianBlur(temp, temp, 7);
             Cv2.CvtColor(temp, temp, ColorConversionCodes.BGR2HSV); //HSV変換
 
@@ -153,7 +159,6 @@ namespace Chromakey2022
             {
                 for (int x = 0; x < 640; x++)
                 {
-                    //int a = (int)temp.Step() * y + (x * 3);
                     Vec3b temp_px = temp.At<Vec3b>(y, x);
                     Vec3b img_px = img.At<Vec3b>(y, x);
                     if (temp_px[0] >= Hlow && temp_px[0] <= Hup &&
@@ -164,16 +169,11 @@ namespace Chromakey2022
                         img_px[1] = 0x00;
                         img_px[2] = 0x00;
                     }
-                    img.Set<Vec3b>(y, x, img_px);
+                    img.Set(y, x, img_px);
                 }
             }
             temp.Release();
             return img;
         }
-
-        /*private void MarshalString(string s, )
-        {
-
-        }*/
     }
 }
