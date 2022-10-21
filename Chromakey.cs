@@ -130,10 +130,11 @@ namespace Chromakey2022
                 Cv2.Flip(comp, flipImg, FlipMode.Y);
                 Cv2.ImShow("ChromakeyFlip", flipImg); //反転画像
                 Cv2.ImShow("Chromakey", img); //最終的な画像
-                Mat ipl = comp; //OpenCVの画像データを管理している構造体
-                bmp = new Bitmap(ipl.Cols, ipl.Rows, (int)ipl.Step(), System.Drawing.Imaging.PixelFormat.Format24bppRgb, ipl.Data);
+                //Mat ipl = comp; //OpenCVの画像データを管理している構造体
+                //下記コードを処理中にimage()メソッドが実行されるとエラーが起こる
+                bmp = new Bitmap(comp.Cols, comp.Rows, (int)comp.Step(), System.Drawing.Imaging.PixelFormat.Format24bppRgb, comp.Data);
 
-                Cv2.WaitKey(30);
+                Cv2.WaitKey(1);
 
                 src_img.Dispose();
                 mask.Dispose();
@@ -154,8 +155,29 @@ namespace Chromakey2022
             Cv2.MedianBlur(temp, temp, 7);
             Cv2.CvtColor(temp, temp, ColorConversionCodes.BGR2HSV); //HSV変換
 
+            unsafe
+            {
+                byte* temp_px = temp.DataPointer;
+                byte* img_px = img.DataPointer;
+                for (int y = 0; y < 480; y++)
+                {
+                    for (int x = 0; x < 640; x++)
+                    {
+                        if (temp_px[0] >= Hlow && temp_px[0] <= Hup &&
+                            temp_px[1] >= Slow && temp_px[1] <= Sup &&
+                            temp_px[2] >= Vlow && temp_px[2] <= Vup)
+                        {
+                            img_px[0] = 0x00;
+                            img_px[1] = 0x00;
+                            img_px[2] = 0x00;
+                        }
+                        temp_px += 3;
+                        img_px += 3;
+                    }
+                }
+            }
 
-            for (int y = 0; y < 480; y++)
+            /*for (int y = 0; y < 480; y++)
             {
                 for (int x = 0; x < 640; x++)
                 {
@@ -171,8 +193,9 @@ namespace Chromakey2022
                     }
                     img.Set(y, x, img_px);
                 }
-            }
-            temp.Release();
+            }*/
+
+            temp.Dispose();
             return img;
         }
     }
