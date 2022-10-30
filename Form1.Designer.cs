@@ -72,6 +72,7 @@
             this.btnTransS = new System.Windows.Forms.Button();
             this.btnTransN = new System.Windows.Forms.Button();
             this.btnrenew = new System.Windows.Forms.Button();
+            this.AddBackGround = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numHup)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numHlow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numSlow)).BeginInit();
@@ -92,7 +93,7 @@
             this.numHup.Name = "numHup";
             this.numHup.Size = new System.Drawing.Size(55, 19);
             this.numHup.TabIndex = 6;
-            this.numHup.ValueChanged += new System.EventHandler(this.numHup_ValueChanged);
+            this.numHup.ValueChanged += new System.EventHandler(this.NumHup_ValueChanged);
             // 
             // lblHup
             // 
@@ -109,7 +110,7 @@
             this.numHlow.Name = "numHlow";
             this.numHlow.Size = new System.Drawing.Size(55, 19);
             this.numHlow.TabIndex = 5;
-            this.numHlow.ValueChanged += new System.EventHandler(this.numHdown_ValueChanged);
+            this.numHlow.ValueChanged += new System.EventHandler(this.NumHdown_ValueChanged);
             // 
             // lblHlow
             // 
@@ -144,7 +145,7 @@
             this.numSlow.Name = "numSlow";
             this.numSlow.Size = new System.Drawing.Size(55, 19);
             this.numSlow.TabIndex = 7;
-            this.numSlow.ValueChanged += new System.EventHandler(this.numSdown_ValueChanged);
+            this.numSlow.ValueChanged += new System.EventHandler(this.NumSdown_ValueChanged);
             // 
             // numSup
             // 
@@ -157,7 +158,7 @@
             this.numSup.Name = "numSup";
             this.numSup.Size = new System.Drawing.Size(55, 19);
             this.numSup.TabIndex = 8;
-            this.numSup.ValueChanged += new System.EventHandler(this.numSup_ValueChanged);
+            this.numSup.ValueChanged += new System.EventHandler(this.NumSup_ValueChanged);
             // 
             // numVlow
             // 
@@ -165,7 +166,7 @@
             this.numVlow.Name = "numVlow";
             this.numVlow.Size = new System.Drawing.Size(55, 19);
             this.numVlow.TabIndex = 9;
-            this.numVlow.ValueChanged += new System.EventHandler(this.numVdown_ValueChanged);
+            this.numVlow.ValueChanged += new System.EventHandler(this.NumVdown_ValueChanged);
             // 
             // numVup
             // 
@@ -178,7 +179,7 @@
             this.numVup.Name = "numVup";
             this.numVup.Size = new System.Drawing.Size(55, 19);
             this.numVup.TabIndex = 10;
-            this.numVup.ValueChanged += new System.EventHandler(this.numVup_ValueChanged);
+            this.numVup.ValueChanged += new System.EventHandler(this.NumVup_ValueChanged);
             // 
             // lblVal
             // 
@@ -197,7 +198,7 @@
             this.lbBack.Name = "lbBack";
             this.lbBack.Size = new System.Drawing.Size(235, 196);
             this.lbBack.TabIndex = 4;
-            this.lbBack.SelectedIndexChanged += new System.EventHandler(this.lbBack_SelectedIndexChanged);
+            this.lbBack.SelectedIndexChanged += new System.EventHandler(this.LbBack_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -234,7 +235,7 @@
             this.btnStart.TabIndex = 3;
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = true;
-            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            this.btnStart.Click += new System.EventHandler(this.BtnStart_Click);
             // 
             // cBoxCam1
             // 
@@ -280,37 +281,37 @@
             this.btnFlip.TabIndex = 5;
             this.btnFlip.Text = "Flip ON";
             this.btnFlip.UseVisualStyleBackColor = true;
-            this.btnFlip.Click += new System.EventHandler(this.btnFlip_Click);
+            this.btnFlip.Click += new System.EventHandler(this.BtnFlip_Click);
             // 
             // btnSynthesis
             // 
-            this.btnSynthesis.Location = new System.Drawing.Point(253, 146);
+            this.btnSynthesis.Location = new System.Drawing.Point(253, 129);
             this.btnSynthesis.Name = "btnSynthesis";
             this.btnSynthesis.Size = new System.Drawing.Size(154, 23);
             this.btnSynthesis.TabIndex = 34;
             this.btnSynthesis.Text = "Synthesis";
             this.btnSynthesis.UseVisualStyleBackColor = true;
-            this.btnSynthesis.Click += new System.EventHandler(this.btnSynthesis_Click);
+            this.btnSynthesis.Click += new System.EventHandler(this.BtnSynthesis_Click);
             // 
             // btnCapture
             // 
-            this.btnCapture.Location = new System.Drawing.Point(253, 175);
+            this.btnCapture.Location = new System.Drawing.Point(253, 158);
             this.btnCapture.Name = "btnCapture";
             this.btnCapture.Size = new System.Drawing.Size(154, 23);
             this.btnCapture.TabIndex = 19;
             this.btnCapture.Text = "Capture";
             this.btnCapture.UseVisualStyleBackColor = true;
-            this.btnCapture.Click += new System.EventHandler(this.btnCapture_Click);
+            this.btnCapture.Click += new System.EventHandler(this.BtnCapture_Click);
             // 
             // btnPrint
             // 
-            this.btnPrint.Location = new System.Drawing.Point(253, 204);
+            this.btnPrint.Location = new System.Drawing.Point(253, 187);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(154, 23);
             this.btnPrint.TabIndex = 20;
             this.btnPrint.Text = "Print";
             this.btnPrint.UseVisualStyleBackColor = true;
-            this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
+            this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
             // menuStrip1
             // 
@@ -346,21 +347,21 @@
             this.captureToolStripMenuItem1.Name = "captureToolStripMenuItem1";
             this.captureToolStripMenuItem1.Size = new System.Drawing.Size(137, 22);
             this.captureToolStripMenuItem1.Text = "キャプチャする";
-            this.captureToolStripMenuItem1.Click += new System.EventHandler(this.captureToolStripMenuItem1_Click);
+            this.captureToolStripMenuItem1.Click += new System.EventHandler(this.CaptureToolStripMenuItem1_Click);
             // 
             // showInFolderToolStripMenuItem
             // 
             this.showInFolderToolStripMenuItem.Name = "showInFolderToolStripMenuItem";
             this.showInFolderToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.showInFolderToolStripMenuItem.Text = "フォルダを開く";
-            this.showInFolderToolStripMenuItem.Click += new System.EventHandler(this.showInFolderToolStripMenuItem_Click);
+            this.showInFolderToolStripMenuItem.Click += new System.EventHandler(this.ShowInFolderToolStripMenuItem_Click);
             // 
             // printToolStripMenuItem
             // 
             this.printToolStripMenuItem.Name = "printToolStripMenuItem";
             this.printToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.printToolStripMenuItem.Text = "印刷";
-            this.printToolStripMenuItem.Click += new System.EventHandler(this.printToolStripMenuItem_Click);
+            this.printToolStripMenuItem.Click += new System.EventHandler(this.PrintToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
@@ -377,7 +378,7 @@
             this.btnRotateL.TabIndex = 22;
             this.btnRotateL.Text = "左回転";
             this.btnRotateL.UseVisualStyleBackColor = true;
-            this.btnRotateL.Click += new System.EventHandler(this.btnRotateL_Click);
+            this.btnRotateL.Click += new System.EventHandler(this.BtnRotateL_Click);
             // 
             // btnRotateR
             // 
@@ -387,7 +388,7 @@
             this.btnRotateR.TabIndex = 23;
             this.btnRotateR.Text = "右回転";
             this.btnRotateR.UseVisualStyleBackColor = true;
-            this.btnRotateR.Click += new System.EventHandler(this.btnRotateR_Click);
+            this.btnRotateR.Click += new System.EventHandler(this.BtnRotateR_Click);
             // 
             // lblRotate
             // 
@@ -415,7 +416,7 @@
             this.btnScaleUp.TabIndex = 26;
             this.btnScaleUp.Text = "拡大";
             this.btnScaleUp.UseVisualStyleBackColor = true;
-            this.btnScaleUp.Click += new System.EventHandler(this.btnScaleUp_Click);
+            this.btnScaleUp.Click += new System.EventHandler(this.BtnScaleUp_Click);
             // 
             // btnScaleDown
             // 
@@ -425,7 +426,7 @@
             this.btnScaleDown.TabIndex = 25;
             this.btnScaleDown.Text = "縮小";
             this.btnScaleDown.UseVisualStyleBackColor = true;
-            this.btnScaleDown.Click += new System.EventHandler(this.btnScaleDown_Click);
+            this.btnScaleDown.Click += new System.EventHandler(this.BtnScaleDown_Click);
             // 
             // btnReset
             // 
@@ -435,7 +436,7 @@
             this.btnReset.TabIndex = 28;
             this.btnReset.Text = "リセット";
             this.btnReset.UseVisualStyleBackColor = true;
-            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
+            this.btnReset.Click += new System.EventHandler(this.BtnReset_Click);
             // 
             // lblTranslate
             // 
@@ -454,7 +455,7 @@
             this.btnTransE.TabIndex = 30;
             this.btnTransE.Text = "右移動";
             this.btnTransE.UseVisualStyleBackColor = true;
-            this.btnTransE.Click += new System.EventHandler(this.btnTransE_Click);
+            this.btnTransE.Click += new System.EventHandler(this.BtnTransE_Click);
             // 
             // btnTransW
             // 
@@ -464,7 +465,7 @@
             this.btnTransW.TabIndex = 29;
             this.btnTransW.Text = "左移動";
             this.btnTransW.UseVisualStyleBackColor = true;
-            this.btnTransW.Click += new System.EventHandler(this.btnTransW_Click);
+            this.btnTransW.Click += new System.EventHandler(this.BtnTransW_Click);
             // 
             // btnTransS
             // 
@@ -474,7 +475,7 @@
             this.btnTransS.TabIndex = 33;
             this.btnTransS.Text = "下移動";
             this.btnTransS.UseVisualStyleBackColor = true;
-            this.btnTransS.Click += new System.EventHandler(this.btnTransS_Click);
+            this.btnTransS.Click += new System.EventHandler(this.BtnTransS_Click);
             // 
             // btnTransN
             // 
@@ -484,7 +485,7 @@
             this.btnTransN.TabIndex = 32;
             this.btnTransN.Text = "上移動";
             this.btnTransN.UseVisualStyleBackColor = true;
-            this.btnTransN.Click += new System.EventHandler(this.btnTransN_Click);
+            this.btnTransN.Click += new System.EventHandler(this.BtnTransN_Click);
             // 
             // btnrenew
             // 
@@ -495,11 +496,22 @@
             this.btnrenew.Text = "更新";
             this.btnrenew.UseVisualStyleBackColor = true;
             // 
+            // AddBackGround
+            // 
+            this.AddBackGround.Location = new System.Drawing.Point(253, 217);
+            this.AddBackGround.Name = "AddBackGround";
+            this.AddBackGround.Size = new System.Drawing.Size(154, 23);
+            this.AddBackGround.TabIndex = 36;
+            this.AddBackGround.Text = "Add Background";
+            this.AddBackGround.UseVisualStyleBackColor = true;
+            this.AddBackGround.Click += new System.EventHandler(this.AddBackGround_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(559, 452);
+            this.Controls.Add(this.AddBackGround);
             this.Controls.Add(this.btnrenew);
             this.Controls.Add(this.btnSynthesis);
             this.Controls.Add(this.btnTransS);
@@ -601,6 +613,7 @@
         private System.Windows.Forms.Button btnTransN;
         private System.Windows.Forms.Button btnSynthesis;
         private System.Windows.Forms.Button btnrenew;
+        private System.Windows.Forms.Button AddBackGround;
     }
 }
 

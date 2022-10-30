@@ -17,7 +17,8 @@ namespace Chromakey2022
         public int bgIndex = 0;
         public int Hlow = 40, Hup = 80, Slow = 80, Sup = 255, Vlow = 50, Vup = 255;
         public double Scale = 1.0, Rotate = 0.0, TransX = 0.0, TransY = 0.0;
-        private List<string> bgpath = new List<string>();
+        //private List<string> bgpath = new List<string>();
+        private List<Mat> bg = new List<Mat>();
         private int cntCam = 0, cntBg = 0; //カメラの個数,背景の個数
         private bool flgRun = false;
         private bool flgCap = false;
@@ -41,45 +42,48 @@ namespace Chromakey2022
             }
         }
 
-        public void run(int cam1, int cam2)
+        public void Run(int cam1, int cam2)
         {
             flgRun = true;
             this.cam1 = cam1;
             this.cam2 = cam2;
-            Thread th1 = new Thread(new ThreadStart(capture));
+            Thread th1 = new Thread(new ThreadStart(Capture));
             th1.Start();
         }
 
-        public int numofcam()   //カメラの接続台数を返す
+        public int Numofcam()   //カメラの接続台数を返す
         {
             return cntCam;
         }
 
-        public void setbgpath(string str)   //背景画像のパスを可変長配列bgpathに追加
+        public void Setbgpath(string str)   //背景画像のパスを可変長配列bgpathに追加
         {
-            bgpath.Add(str);
+            //bgpath.Add(str);
+            bg.Add(Cv2.ImRead(str));
         }
 
-        public void stop()  //flgRunフラグをfalseにセット
+        public void Stop()  //flgRunフラグをfalseにセット
         {
             flgRun = false;
         }
 
-        public Bitmap image()   //flgCapフラグをtrueにセット後、スレッドを100ミリ秒停止し、Bitmap画像を返す
+        public Bitmap Image()   //flgCapフラグをtrueにセット後、スレッドを100ミリ秒停止し、Bitmap画像を返す
         {
             flgCap = true;
-            Thread.Sleep(100);
-            return bmp;
+            while (true)
+            {
+                if(!flgCap) return bmp;
+            }
         }
 
-        private void capture()
+        private void Capture()
         {
             flgRun = true;
-            List<Mat> bg = new List<Mat>();
+            /*List<Mat> bg = new List<Mat>();
             for(int i = 0; i < bgpath.Count; i++)
             {
                 bg.Add(Cv2.ImRead(bgpath[i]));  //背景画像をMat型の可変長配列bgに追加
-            }
+            }*/
 
             VideoCapture cap1 = new VideoCapture(cam1);
             if(!cap1.IsOpened())
@@ -119,7 +123,7 @@ namespace Chromakey2022
                 mat.At<double>(1, 2) += TransY;
                 Cv2.WarpAffine(src_img, src_img2, mat, src_img2.Size(), InterpolationFlags.Linear, BorderTypes.Transparent); //アフィン変換 (元画像、変換後画像、変換行列、大きさ、補完方法、ピクセル外挿方法)
 
-                mask = setMask(src_img2);//マスクの作成
+                mask = SetMask(src_img2);//マスクの作成
 
                 comp = bg[bgIndex].Clone(); //背景画像の取得（準備した画像、または、カメラ2からとってきた画像）
 
@@ -131,8 +135,12 @@ namespace Chromakey2022
                 Cv2.ImShow("ChromakeyFlip", flipImg); //反転画像
                 Cv2.ImShow("Chromakey", img); //最終的な画像
                 //Mat ipl = comp; //OpenCVの画像データを管理している構造体
-                //下記コードを処理中にimage()メソッドが実行されるとエラーが起こる
-                bmp = new Bitmap(comp.Cols, comp.Rows, (int)comp.Step(), System.Drawing.Imaging.PixelFormat.Format24bppRgb, comp.Data);
+                if(flgCap)
+                {
+                    bmp = new Bitmap(comp.Cols, comp.Rows, (int)comp.Step(), System.Drawing.Imaging.PixelFormat.Format24bppRgb, comp.Data);
+                    Thread.Sleep(100);
+                    flgCap = false;
+                }
 
                 Cv2.WaitKey(1);
 
@@ -148,7 +156,7 @@ namespace Chromakey2022
             cap2.Dispose();
         }
 
-        private Mat setMask(Mat src_img)
+        private Mat SetMask(Mat src_img)
         {
             Mat temp = src_img.Clone();
             Mat img = new Mat(480, 640, MatType.CV_8UC3, new Scalar(255, 255, 255));
