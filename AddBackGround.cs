@@ -13,9 +13,11 @@ namespace Chromakey2022
 {
     public partial class AddBackGround : Form
     {
-        public AddBackGround()
+        private XmlEditor xmlEditor;
+        public AddBackGround(XmlEditor xmlEditor)
         {
             InitializeComponent();
+            this.xmlEditor = xmlEditor;
         }
 
         private void Selectimg_Click(object sender, EventArgs e)
@@ -33,10 +35,10 @@ namespace Chromakey2022
             {
                 if(File.Exists(textBox1.Text) && textBox2.Text != "")
                 {
-                    XmlEditor xmlEditor = new XmlEditor("background.xml");
                     xmlEditor.XmlWrite(new System.Xml.Linq.XElement("picture",
                         new System.Xml.Linq.XElement("name", textBox2.Text),
                         new System.Xml.Linq.XElement("path", textBox1.Text)));
+
                     DialogResult = DialogResult.OK;
                     Close();
                 }

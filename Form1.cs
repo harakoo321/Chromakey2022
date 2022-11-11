@@ -13,27 +13,26 @@ using System.Drawing.Printing;
 using System.Drawing.Imaging;
 using Chromakey2022;
 
-//System.Runtime.InteropServices.DllImportAttribute("winmm.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto);
-
-
 namespace Chromakey_NakanoLab
 {
     public partial class Form1 : Form
     {
         Chromakey ck; //このクラスはChromakey.csに記述されている。
         DateTime dt;
-        private List<String> bgname;
-        private List<String> bgpath;
-        Bitmap bmp;
+        private XmlEditor bgxml;
+        private List<String> bgname = new List<string>();
+        private List<String> bgpath = new List<string>();
 
         public Form1()
         {
             InitializeComponent();
-            Xmlreader();
+            bgxml = new XmlEditor("background.xml");
+            bgxml.XmlRead(bgname, "name");
+            bgxml.XmlRead(bgpath, "path");
             ck = new Chromakey();
             for (int i = 0; i < bgpath.Count; i++)
             {
-                ck.Setbgpath(bgpath[i]);
+                ck.SetBackground(bgpath[i]);
             }
         }
 
@@ -65,6 +64,7 @@ namespace Chromakey_NakanoLab
             btnCapture.Enabled = false;
             btnFlip.Enabled = false;
             btnPrint.Enabled = false;
+            btnSynthesis.Enabled = false;
             //アプリケーション終了時のイベントハンドラを追加
             Application.ApplicationExit += new EventHandler(Application_ApplicationExit);
 
@@ -125,6 +125,7 @@ namespace Chromakey_NakanoLab
             ck.Run(cBoxCam1.SelectedIndex, cBoxCam2.SelectedIndex - 1);
             btnStart.Enabled = false;
             btnCapture.Enabled = true;
+            btnSynthesis.Enabled = true;
             if (cBoxCam2.SelectedIndex != 0)
                 lbBack.Items.Add("Camera2");
         }
@@ -143,105 +144,41 @@ namespace Chromakey_NakanoLab
             }
         }
 
-        //private static extern int mciSendString(string command, System.Text.StringBuilder buffer, int bufferSize, IntPtr hwndCallback);
-        //private string aliasName = "MediaFile";
-
         private void BtnSynthesis_Click(object sender, EventArgs e)
         {
-            /*string fileName = "D:\\Chromakey:\\Chromakey2015:\\music:\\shutter.wav";
-           string cmd;
-           cmd = "open \"" + fileName + "\" alias " + aliasName;
-           if (mciSendString(cmd, null, 0, IntPtr.Zero) != 0)
-               return;
-           cmd = "play " + aliasName;
-           mciSendString(cmd, null, 0, IntPtr.Zero);
-           */
+            using (Bitmap bmp = ck.Image())
+            {
+                bmp.Save("background/copy.jpg", ImageFormat.Jpeg);
+            }
 
-            bmp = new Bitmap(ck.Image());
-            bmp.Save("background/copy.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
             btnPrint.Enabled = false;
-
-            /*
-           cmd = "stop " + aliasName;
-           mciSendString(cmd, null, 0, IntPtr.Zero);
-           cmd = "close " + aliasName;
-           mciSendString(cmd, null, 0, IntPtr.Zero);
-           */
         }
 
         private void BtnCapture_Click(object sender, EventArgs e)
         {
-            /*string fileName = "D:\\Chromakey:\\Chromakey2015:\\music:\\shutter.wav";
-            string cmd;
-            cmd = "open \"" + fileName + "\" alias " + aliasName;
-            if (mciSendString(cmd, null, 0, IntPtr.Zero) != 0)
-                return;
-            cmd = "play " + aliasName;
-            mciSendString(cmd, null, 0, IntPtr.Zero);
-            */
+            using (Bitmap bmp = ck.Image())
+            {
+                dt = DateTime.Now;
+                bmp.Save("capture/" + dt.ToString("yyyyMMdd_HHmmss") + ".bmp");
+            }
 
-            bmp = new Bitmap(ck.Image());
-            dt = DateTime.Now;
-            bmp.Save("capture/" + dt.ToString("yyyyMMdd_HHmmss") + ".bmp");
             btnPrint.Enabled = true;
-
-            /*
-            cmd = "stop " + aliasName;
-            mciSendString(cmd, null, 0, IntPtr.Zero);
-            cmd = "close " + aliasName;
-            mciSendString(cmd, null, 0, IntPtr.Zero);
-            */
         }
-
 
         private void LbBack_SelectedIndexChanged(object sender, EventArgs e)
         {
             ck.bgIndex = lbBack.SelectedIndex;
         }
 
-
-        private void Xmlreader()
-        {
-            string fn = "background.xml";
-            bgname = new List<string>();
-            bgpath = new List<string>();
-            if (File.Exists(fn))
-            {
-                using (XmlTextReader reader = new XmlTextReader(fn))
-                {
-                    while (reader.Read())
-                    {
-                        if (reader.NodeType == XmlNodeType.Element)
-                        {
-                            switch (reader.LocalName)
-                            {
-                                case "path":
-                                    Console.WriteLine("Hello World!");
-                                    bgpath.Add(reader.ReadString());
-                                    break;
-                                case "name":
-                                    bgname.Add(reader.ReadString());
-                                    break;
-                            }
-                        }
-                    }
-                    reader.Close();
-                }
-            }
-        }
-
-
         private void BtnPrint_Click(object sender, EventArgs e)
         {
             MessageBox.Show("プロパティから名刺サイズに選択してください。\nまた，縁無しにしないと全範囲印刷されません。");
             //PrintDocumentオブジェクトの作成
-            System.Drawing.Printing.PrintDocument pd =
-                new System.Drawing.Printing.PrintDocument();
+            PrintDocument pd = new PrintDocument();
 
             pd.DefaultPageSettings.PaperSize = new PaperSize("meishi", 216, 358);
             //PrintPageイベントハンドラの追加
-            pd.PrintPage +=
-                new System.Drawing.Printing.PrintPageEventHandler(Pd_PrintPage);
+            pd.PrintPage += new PrintPageEventHandler(Pd_PrintPage);
 
             //PrintDialogクラスの作成
             PrintDialog pdlg = new PrintDialog();
@@ -253,11 +190,9 @@ namespace Chromakey_NakanoLab
                 //OKがクリックされた時は印刷する
                 pd.Print();
             }
-
-
         }
 
-        private void Pd_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        private void Pd_PrintPage(object sender, PrintPageEventArgs e)
         {
             //画像を読み込む
             Image img = Image.FromFile("capture/" + dt.ToString("yyyyMMdd_HHmmss") + ".bmp");
@@ -277,9 +212,12 @@ namespace Chromakey_NakanoLab
                 MessageBox.Show("カメラをスタートしないとキャプチャできません。");
                 return;
             }
-            bmp = new Bitmap(ck.Image());
-            dt = DateTime.Now;
-            bmp.Save("capture/" + dt.ToString("yyyyMMdd_HHmmss") + ".bmp");
+            using (Bitmap bmp = ck.Image())
+            {
+                dt = DateTime.Now;
+                bmp.Save("capture/" + dt.ToString("yyyyMMdd_HHmmss") + ".bmp");
+            }
+
             btnPrint.Enabled = true;
         }
 
@@ -292,13 +230,11 @@ namespace Chromakey_NakanoLab
             }
             MessageBox.Show("プロパティから名刺サイズに選択してください。\nまた，縁無しにしないと全範囲印刷されません。");
             //PrintDocumentオブジェクトの作成
-            System.Drawing.Printing.PrintDocument pd =
-                new System.Drawing.Printing.PrintDocument();
+            PrintDocument pd = new PrintDocument();
 
             pd.DefaultPageSettings.PaperSize = new PaperSize("meishi", 216, 358);
             //PrintPageイベントハンドラの追加
-            pd.PrintPage +=
-                new System.Drawing.Printing.PrintPageEventHandler(Pd_PrintPage);
+            pd.PrintPage += new PrintPageEventHandler(Pd_PrintPage);
 
             //PrintDialogクラスの作成
             PrintDialog pdlg = new PrintDialog();
@@ -334,10 +270,11 @@ namespace Chromakey_NakanoLab
         //更新
         private void Btnrenew_Click(object sender, EventArgs e)
         {
+            /*
             Form1 frm1 = new Form1();
             this.Close();
             frm1.Show();
-            //Xmlreader();
+            */
         }
 
         //縮尺
@@ -385,13 +322,14 @@ namespace Chromakey_NakanoLab
 
         private void AddBackGround_Click(object sender, EventArgs e)
         {
-            using (AddBackGround addbackground = new AddBackGround())
+            using (AddBackGround addbackground = new AddBackGround(bgxml))
             {
                 if(addbackground.ShowDialog() == DialogResult.OK)
                 {
-                    Xmlreader();
+                    bgxml.XmlRead(bgname, "name");
+                    bgxml.XmlRead(bgpath, "path");
                     lbBack.Items.Add(bgname[bgname.Count - 1]);
-                    ck.Setbgpath(bgpath[bgpath.Count - 1]);
+                    ck.SetBackground(bgpath[bgpath.Count - 1]);
                 }
             }
         }

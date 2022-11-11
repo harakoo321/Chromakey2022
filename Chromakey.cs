@@ -17,7 +17,6 @@ namespace Chromakey2022
         public int bgIndex = 0;
         public int Hlow = 40, Hup = 80, Slow = 80, Sup = 255, Vlow = 50, Vup = 255;
         public double Scale = 1.0, Rotate = 0.0, TransX = 0.0, TransY = 0.0;
-        //private List<string> bgpath = new List<string>();
         private List<Mat> bg = new List<Mat>();
         private int cntCam = 0, cntBg = 0; //カメラの個数,背景の個数
         private bool flgRun = false;
@@ -56,9 +55,8 @@ namespace Chromakey2022
             return cntCam;
         }
 
-        public void Setbgpath(string str)   //背景画像のパスを可変長配列bgpathに追加
+        public void SetBackground(string str)   //背景画像のパスを可変長配列bgpathに追加
         {
-            //bgpath.Add(str);
             bg.Add(Cv2.ImRead(str));
         }
 
@@ -70,20 +68,15 @@ namespace Chromakey2022
         public Bitmap Image()   //flgCapフラグをtrueにセット後、スレッドを100ミリ秒停止し、Bitmap画像を返す
         {
             flgCap = true;
-            while (true)
-            {
-                if(!flgCap) return bmp;
-            }
+            while (flgCap) { }
+            Bitmap bitmap = (Bitmap)bmp.Clone();
+            bmp.Dispose();
+            return bitmap;
         }
 
         private void Capture()
         {
             flgRun = true;
-            /*List<Mat> bg = new List<Mat>();
-            for(int i = 0; i < bgpath.Count; i++)
-            {
-                bg.Add(Cv2.ImRead(bgpath[i]));  //背景画像をMat型の可変長配列bgに追加
-            }*/
 
             VideoCapture cap1 = new VideoCapture(cam1);
             if(!cap1.IsOpened())
@@ -127,6 +120,8 @@ namespace Chromakey2022
 
                 comp = bg[bgIndex].Clone(); //背景画像の取得（準備した画像、または、カメラ2からとってきた画像）
 
+                //Cv2.Resize(mask, mask, new OpenCvSharp.Size(), comp.Cols/mask.Cols, comp.Rows/mask.Rows, InterpolationFlags.Linear);
+
                 src_img2.CopyTo(comp, mask);//マスク処理：元の画像、背景画像、マスクを合わせる
                 if(flgFlip) Cv2.Flip(comp, img, FlipMode.Y);
                 else img = comp.Clone();
@@ -137,8 +132,7 @@ namespace Chromakey2022
                 //Mat ipl = comp; //OpenCVの画像データを管理している構造体
                 if(flgCap)
                 {
-                    bmp = new Bitmap(comp.Cols, comp.Rows, (int)comp.Step(), System.Drawing.Imaging.PixelFormat.Format24bppRgb, comp.Data);
-                    Thread.Sleep(100);
+                    bmp = BitmapConverter.ToBitmap(comp);
                     flgCap = false;
                 }
 
@@ -159,7 +153,7 @@ namespace Chromakey2022
         private Mat SetMask(Mat src_img)
         {
             Mat temp = src_img.Clone();
-            Mat img = new Mat(480, 640, MatType.CV_8UC3, new Scalar(255, 255, 255));
+            Mat img = new Mat(temp.Rows, temp.Cols, MatType.CV_8UC3, new Scalar(255, 255, 255));
             Cv2.MedianBlur(temp, temp, 7);
             Cv2.CvtColor(temp, temp, ColorConversionCodes.BGR2HSV); //HSV変換
 
@@ -167,9 +161,9 @@ namespace Chromakey2022
             {
                 byte* temp_px = temp.DataPointer;
                 byte* img_px = img.DataPointer;
-                for (int y = 0; y < 480; y++)
+                for (int y = 0; y < temp.Rows; y++)
                 {
-                    for (int x = 0; x < 640; x++)
+                    for (int x = 0; x < temp.Cols; x++)
                     {
                         if (temp_px[0] >= Hlow && temp_px[0] <= Hup &&
                             temp_px[1] >= Slow && temp_px[1] <= Sup &&
@@ -184,25 +178,6 @@ namespace Chromakey2022
                     }
                 }
             }
-
-            /*for (int y = 0; y < 480; y++)
-            {
-                for (int x = 0; x < 640; x++)
-                {
-                    Vec3b temp_px = temp.At<Vec3b>(y, x);
-                    Vec3b img_px = img.At<Vec3b>(y, x);
-                    if (temp_px[0] >= Hlow && temp_px[0] <= Hup &&
-                        temp_px[1] >= Slow && temp_px[1] <= Sup &&
-                        temp_px[2] >= Vlow && temp_px[2] <= Vup)
-                    {
-                        img_px[0] = 0x00;
-                        img_px[1] = 0x00;
-                        img_px[2] = 0x00;
-                    }
-                    img.Set(y, x, img_px);
-                }
-            }*/
-
             temp.Dispose();
             return img;
         }

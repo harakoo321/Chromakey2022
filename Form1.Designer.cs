@@ -495,6 +495,7 @@
             this.btnrenew.TabIndex = 35;
             this.btnrenew.Text = "更新";
             this.btnrenew.UseVisualStyleBackColor = true;
+            this.btnrenew.Click += new System.EventHandler(this.Btnrenew_Click);
             // 
             // AddBackGround
             // 
