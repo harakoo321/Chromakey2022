@@ -27,8 +27,8 @@ namespace Chromakey_NakanoLab
         {
             InitializeComponent();
             bgxml = new XmlEditor("background.xml");
-            bgxml.XmlRead(bgname, "name");
-            bgxml.XmlRead(bgpath, "path");
+            bgxml.XmlReadItem(bgname, "name");
+            bgxml.XmlReadItem(bgpath, "path");
             ck = new Chromakey();
             for (int i = 0; i < bgpath.Count; i++)
             {
@@ -46,20 +46,26 @@ namespace Chromakey_NakanoLab
             numVlow.Value = 50;
             numVup.Value = 255;
 
-            int n = ck.Numofcam();
-
             cBoxCam2.Items.Add("選択しない");
 
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < ck.Numofcam(); i++)
             {
                 cBoxCam1.Items.Add(i);
                 cBoxCam2.Items.Add(i);
             }
-            cBoxCam1.SelectedIndex = 0; //カメラが接続されてないときにエラー
-            cBoxCam2.SelectedIndex = 0;
 
-            for (int i = 0; i < bgname.Count; i++)
-                lbBack.Items.Add(bgname[i]);
+            try
+            {
+                cBoxCam1.SelectedIndex = 0;
+                cBoxCam2.SelectedIndex = 0;
+            }
+            catch
+            {
+                MessageBox.Show("カメラが接続されていません。", "エラー", MessageBoxButtons.OK);
+                btnStart.Enabled = false;
+            }
+
+            for (int i = 0; i < bgname.Count; i++) lbBack.Items.Add(bgname[i]);
 
             btnCapture.Enabled = false;
             btnFlip.Enabled = false;
@@ -326,8 +332,8 @@ namespace Chromakey_NakanoLab
             {
                 if(addbackground.ShowDialog() == DialogResult.OK)
                 {
-                    bgxml.XmlRead(bgname, "name");
-                    bgxml.XmlRead(bgpath, "path");
+                    bgxml.XmlReadItem(bgname, "name");
+                    bgxml.XmlReadItem(bgpath, "path");
                     lbBack.Items.Add(bgname[bgname.Count - 1]);
                     ck.SetBackground(bgpath[bgpath.Count - 1]);
                 }

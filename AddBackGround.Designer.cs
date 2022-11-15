@@ -30,8 +30,8 @@
         {
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.img_path = new System.Windows.Forms.TextBox();
+            this.img_name = new System.Windows.Forms.TextBox();
             this.Selectimg = new System.Windows.Forms.Button();
             this.Addbg = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -57,17 +57,17 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(86, 13);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(294, 19);
-            this.textBox1.TabIndex = 2;
+            this.img_path.Location = new System.Drawing.Point(86, 13);
+            this.img_path.Name = "textBox1";
+            this.img_path.Size = new System.Drawing.Size(294, 19);
+            this.img_path.TabIndex = 2;
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(86, 38);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(294, 19);
-            this.textBox2.TabIndex = 3;
+            this.img_name.Location = new System.Drawing.Point(86, 38);
+            this.img_name.Name = "textBox2";
+            this.img_name.Size = new System.Drawing.Size(294, 19);
+            this.img_name.TabIndex = 3;
             // 
             // Selectimg
             // 
@@ -99,8 +99,8 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.Addbg);
             this.Controls.Add(this.Selectimg);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.img_name);
+            this.Controls.Add(this.img_path);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -119,8 +119,8 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox img_path;
+        private System.Windows.Forms.TextBox img_name;
         private System.Windows.Forms.Button Selectimg;
         private System.Windows.Forms.Button Addbg;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;

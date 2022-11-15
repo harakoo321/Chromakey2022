@@ -11,21 +11,20 @@ using System.Windows.Forms;
 
 namespace Chromakey2022
 {
-    public partial class AddBackGround : Form
+    public partial class AddBackGround : Form   //背景画像を追加するためのダイアログ
     {
         private XmlEditor xmlEditor;
-        public AddBackGround(XmlEditor xmlEditor)
+        public AddBackGround(XmlEditor xmlEditor)   //コンストラクタ
         {
             InitializeComponent();
             this.xmlEditor = xmlEditor;
         }
 
-        private void Selectimg_Click(object sender, EventArgs e)
+        private void Selectimg_Click(object sender, EventArgs e)    //画像ファイルの選択を行うダイアログの表示
         {
-            DialogResult dr = openFileDialog1.ShowDialog(this);
-            if (dr == DialogResult.OK)
+            if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
-                textBox1.Text = openFileDialog1.FileName;
+                img_path.Text = openFileDialog1.FileName;
             }
         }
 
@@ -33,11 +32,11 @@ namespace Chromakey2022
         {
             try
             {
-                if(File.Exists(textBox1.Text) && textBox2.Text != "")
+                if(File.Exists(img_path.Text) && img_name.Text != "")   //指定した画像が存在していて、画像名が空欄でない場合
                 {
-                    xmlEditor.XmlWrite(new System.Xml.Linq.XElement("picture",
-                        new System.Xml.Linq.XElement("name", textBox2.Text),
-                        new System.Xml.Linq.XElement("path", textBox1.Text)));
+                    xmlEditor.XmlAdd(new System.Xml.Linq.XElement("picture",
+                        new System.Xml.Linq.XElement("name", img_name.Text),
+                        new System.Xml.Linq.XElement("path", img_path.Text)));
 
                     DialogResult = DialogResult.OK;
                     Close();
