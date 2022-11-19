@@ -99,30 +99,34 @@ namespace Chromakey2022
             {
                 Mat flame = new Mat(); //カメラ画像
                 Mat mask; //マスク画像（緑部分を黒、それ以外を白）
-                Mat img; //最終的に表示する画像
+                Mat img = new Mat(); //最終的に表示する画像
                 Mat flipImg = new Mat(); //最終的に表示する反転画像
 
                 //カメラからフレームを取得
                 cap1.Read(flame);
                 cap2.Read(temp);
-                
-                img = bglist[bgIndex].Clone(); //背景画像の取得
 
-                Mat converted_flame = new Mat(flame.Rows, flame.Cols, flame.Type(), new Scalar(0,255,0)); //緑で塗りつぶした画像
-                Point2f ctr = new Point2f(flame.Cols / 2, flame.Rows / 2);  //src_imgの中心座標の取得
+                double resize_ratio = (double)flame.Width / (double)bglist[bgIndex].Width;  //背景画像をカメラの横幅に合わせるための倍率の算出
+                Cv2.Resize(bglist[bgIndex], img, new OpenCvSharp.Size(), resize_ratio, resize_ratio); //  リサイズした背景画像の取得
+
+                Mat converted_flame = new Mat(img.Rows, img.Cols, img.Type(), new Scalar(0,255,0)); //緑で塗りつぶした画像
+
+                Point2f ctr = new Point2f(flame.Cols / 2, flame.Rows / 2);  //flameの中心座標の取得
                 Mat mat = Cv2.GetRotationMatrix2D(ctr, Rotate, Scale);  //回転後の座標を取得 引数:中心、回転角度、大きさ
                 mat.At<double>(0, 2) += TransX; //x方向への移動
                 mat.At<double>(1, 2) += TransY; //y方向への移動
                 Cv2.WarpAffine(flame, converted_flame, mat, img.Size(), InterpolationFlags.Linear, BorderTypes.Transparent); //アフィン変換 (元画像、変換後画像、変換行列、大きさ、補完方法、ピクセル外挿方法)
 
                 mask = GetMask(converted_flame);//マスクの作成
-
-                //Cv2.Resize(mask, mask, new OpenCvSharp.Size(), comp.Cols/mask.Cols, comp.Rows/mask.Rows, InterpolationFlags.Linear);
+                //mask = converted_flame.MedianBlur(7).CvtColor(ColorConversionCodes.BGR2HSV).InRange(new Scalar(Hlow, Slow, Vlow), new Scalar(Hup, Sup, Vup));
+                //Cv2.BitwiseNot(mask, mask);
 
                 converted_flame.CopyTo(img, mask);//マスク処理：元の画像、背景画像、マスクを合わせる
                 if(flgFlip) Cv2.Flip(img, img, FlipMode.Y);
 
                 Cv2.Flip(img, flipImg, FlipMode.Y);
+                //Cv2.NamedWindow("Chromakey", WindowFlags.KeepRatio);
+                //Cv2.NamedWindow("ChromakeyFlip", WindowFlags.KeepRatio);
                 Cv2.ImShow("ChromakeyFlip", flipImg); //反転画像
                 Cv2.ImShow("Chromakey", img); //最終的な画像
 
