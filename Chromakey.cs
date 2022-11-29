@@ -58,12 +58,17 @@ namespace Chromakey2022
             bglist.Add(Cv2.ImRead(path));
         }
 
+        public void RemoveBackground(int selectedIndex)
+        {
+            bglist.RemoveAt(selectedIndex);
+        }
+
         public void Stop()  //flgRunフラグをfalseにセット
         {
             flgRun = false;
         }
 
-        public Bitmap Image()   //flgCapフラグをtrueにセット後、Bitmap画像を返す
+        public Bitmap GetImage()   //flgCapフラグをtrueにセット後、Bitmap画像を返す
         {
             flgCap = true;
             while (flgCap) { }  //flgCapがfalseになるまで待つ

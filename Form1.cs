@@ -152,7 +152,7 @@ namespace Chromakey_NakanoLab
 
         private void BtnSynthesis_Click(object sender, EventArgs e)
         {
-            using (Bitmap bmp = ck.Image())
+            using (Bitmap bmp = ck.GetImage())
             {
                 bmp.Save("background/copy.jpg", ImageFormat.Jpeg);
             }
@@ -162,13 +162,41 @@ namespace Chromakey_NakanoLab
 
         private void BtnCapture_Click(object sender, EventArgs e)
         {
-            using (Bitmap bmp = ck.Image())
+            using (Bitmap bmp = ck.GetImage())
             {
                 dt = DateTime.Now;
                 bmp.Save("capture/" + dt.ToString("yyyyMMdd_HHmmss") + ".bmp");
             }
 
             btnPrint.Enabled = true;
+        }
+
+        private void LbBack_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                lbBack.SelectedIndex = lbBack.IndexFromPoint(e.Location);
+            }
+        }
+
+        private void LbBack_RemoveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(lbBack.Text + "を削除しますか？", "確認", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                if (lbBack.Text != "Camera2")
+                {
+                    bgxml.XmlRemove(lbBack.Text);
+                    bgxml.XmlReadItem(bgname, "name");
+                    bgxml.XmlReadItem(bgpath, "path");
+                    ck.RemoveBackground(lbBack.SelectedIndex);
+                    lbBack.Items.RemoveAt(lbBack.SelectedIndex);
+                    lbBack.SelectedIndex = 0;
+                }
+                else
+                {
+                    MessageBox.Show("Camera2は削除できません。", "エラー", MessageBoxButtons.OK);
+                }
+            }
         }
 
         private void LbBack_SelectedIndexChanged(object sender, EventArgs e)
@@ -218,7 +246,7 @@ namespace Chromakey_NakanoLab
                 MessageBox.Show("カメラをスタートしないとキャプチャできません。");
                 return;
             }
-            using (Bitmap bmp = ck.Image())
+            using (Bitmap bmp = ck.GetImage())
             {
                 dt = DateTime.Now;
                 bmp.Save("capture/" + dt.ToString("yyyyMMdd_HHmmss") + ".bmp");

@@ -42,5 +42,12 @@ namespace Chromakey2022
                 datalist.Add(info);
             }
         }
+
+        public void XmlRemove(string tag)
+        {
+            var emp = from p in xml.Descendants("picture") where p.Element("name").Value == tag select p;
+            emp.Remove();
+            xml.Save(filename);
+        }
     }
 }

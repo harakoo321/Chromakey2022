@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.numHup = new System.Windows.Forms.NumericUpDown();
             this.lblHup = new System.Windows.Forms.Label();
             this.numHlow = new System.Windows.Forms.NumericUpDown();
@@ -40,6 +41,8 @@
             this.numVup = new System.Windows.Forms.NumericUpDown();
             this.lblVal = new System.Windows.Forms.Label();
             this.lbBack = new System.Windows.Forms.ListBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.RemoveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -79,6 +82,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numSup)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numVlow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numVup)).BeginInit();
+            this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -192,6 +196,7 @@
             // 
             // lbBack
             // 
+            this.lbBack.ContextMenuStrip = this.contextMenuStrip1;
             this.lbBack.FormattingEnabled = true;
             this.lbBack.ItemHeight = 12;
             this.lbBack.Location = new System.Drawing.Point(12, 29);
@@ -199,6 +204,21 @@
             this.lbBack.Size = new System.Drawing.Size(235, 196);
             this.lbBack.TabIndex = 4;
             this.lbBack.SelectedIndexChanged += new System.EventHandler(this.LbBack_SelectedIndexChanged);
+            this.lbBack.MouseUp += new System.Windows.Forms.MouseEventHandler(this.LbBack_MouseUp);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RemoveToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            // 
+            // RemoveToolStripMenuItem
+            // 
+            this.RemoveToolStripMenuItem.Name = "RemoveToolStripMenuItem";
+            this.RemoveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.RemoveToolStripMenuItem.Text = "削除";
+            this.RemoveToolStripMenuItem.Click += new System.EventHandler(this.LbBack_RemoveToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -339,34 +359,34 @@
             this.showInFolderToolStripMenuItem,
             this.printToolStripMenuItem});
             this.captureToolStripMenuItem.Name = "captureToolStripMenuItem";
-            this.captureToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.captureToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.captureToolStripMenuItem.Text = "キャプチャ";
             // 
             // captureToolStripMenuItem1
             // 
             this.captureToolStripMenuItem1.Name = "captureToolStripMenuItem1";
-            this.captureToolStripMenuItem1.Size = new System.Drawing.Size(137, 22);
+            this.captureToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.captureToolStripMenuItem1.Text = "キャプチャする";
             this.captureToolStripMenuItem1.Click += new System.EventHandler(this.CaptureToolStripMenuItem1_Click);
             // 
             // showInFolderToolStripMenuItem
             // 
             this.showInFolderToolStripMenuItem.Name = "showInFolderToolStripMenuItem";
-            this.showInFolderToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.showInFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showInFolderToolStripMenuItem.Text = "フォルダを開く";
             this.showInFolderToolStripMenuItem.Click += new System.EventHandler(this.ShowInFolderToolStripMenuItem_Click);
             // 
             // printToolStripMenuItem
             // 
             this.printToolStripMenuItem.Name = "printToolStripMenuItem";
-            this.printToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.printToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.printToolStripMenuItem.Text = "印刷";
             this.printToolStripMenuItem.Click += new System.EventHandler(this.PrintToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.ExitToolStripMenuItem.Text = "終了";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -561,6 +581,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numSup)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numVlow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numVup)).EndInit();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -615,6 +636,8 @@
         private System.Windows.Forms.Button btnSynthesis;
         private System.Windows.Forms.Button btnrenew;
         private System.Windows.Forms.Button AddBackGround;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem RemoveToolStripMenuItem;
     }
 }
 
