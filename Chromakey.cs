@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using System.Windows.Forms;
 using OpenCvSharp;
 using OpenCvSharp.Extensions;
 
@@ -100,8 +100,12 @@ namespace Chromakey2022
                 }
             }
 
+            var sw = new System.Diagnostics.Stopwatch();
+
             while (flgRun)
             {
+                sw.Restart();
+                
                 Mat flame = new Mat(); //カメラ画像
                 Mat mask; //マスク画像（緑部分を黒、それ以外を白）
                 Mat img = new Mat(); //最終的に表示する画像
@@ -112,26 +116,27 @@ namespace Chromakey2022
                 cap2.Read(temp);
 
                 double resize_ratio = (double)flame.Width / (double)bglist[bgIndex].Width;  //背景画像をカメラの横幅に合わせるための倍率の算出
+
+                if (resize_ratio <= 0) {
+                    MessageBox.Show("カメラが切断されました。", "エラー", MessageBoxButtons.OK);
+                    break;
+                }
+                
                 Cv2.Resize(bglist[bgIndex], img, new OpenCvSharp.Size(), resize_ratio, resize_ratio); //  リサイズした背景画像の取得
 
                 Mat converted_flame = new Mat(img.Rows, img.Cols, img.Type(), new Scalar(0,255,0)); //緑で塗りつぶした画像
 
-                Point2f ctr = new Point2f(flame.Cols / 2, flame.Rows / 2);  //flameの中心座標の取得
-                Mat mat = Cv2.GetRotationMatrix2D(ctr, Rotate, Scale);  //回転後の座標を取得 引数:中心、回転角度、大きさ
+                Mat mat = Cv2.GetRotationMatrix2D(new Point2f(flame.Cols / 2, flame.Rows / 2), Rotate, Scale);  //flameの中心座標の取得し、回転後の座標を取得 引数:中心、回転角度、大きさ
                 mat.At<double>(0, 2) += TransX; //x方向への移動
                 mat.At<double>(1, 2) += TransY; //y方向への移動
                 Cv2.WarpAffine(flame, converted_flame, mat, img.Size(), InterpolationFlags.Linear, BorderTypes.Transparent); //アフィン変換 (元画像、変換後画像、変換行列、大きさ、補完方法、ピクセル外挿方法)
 
-                mask = GetMask(converted_flame);//マスクの作成
-                //mask = converted_flame.MedianBlur(7).CvtColor(ColorConversionCodes.BGR2HSV).InRange(new Scalar(Hlow, Slow, Vlow), new Scalar(Hup, Sup, Vup));
-                //Cv2.BitwiseNot(mask, mask);
+                mask = GetMask2(converted_flame);//マスクの作成
 
                 converted_flame.CopyTo(img, mask);//マスク処理：元の画像、背景画像、マスクを合わせる
                 if(flgFlip) Cv2.Flip(img, img, FlipMode.Y);
 
                 Cv2.Flip(img, flipImg, FlipMode.Y);
-                //Cv2.NamedWindow("Chromakey", WindowFlags.KeepRatio);
-                //Cv2.NamedWindow("ChromakeyFlip", WindowFlags.KeepRatio);
                 Cv2.ImShow("ChromakeyFlip", flipImg); //反転画像
                 Cv2.ImShow("Chromakey", img); //最終的な画像
 
@@ -150,7 +155,11 @@ namespace Chromakey2022
                 flipImg.Dispose();
                 converted_flame.Dispose();
                 mat.Dispose();
+
+                sw.Stop();
+                Console.WriteLine(1 / (sw.ElapsedMilliseconds * 0.001));
             }
+            Cv2.DestroyAllWindows();
             cap1.Dispose();
             cap2.Dispose();
         }
@@ -184,6 +193,15 @@ namespace Chromakey2022
                 }
             }
             temp.Dispose();
+            return mask;
+        }
+
+        private Mat GetMask2(Mat mat)
+        {
+            Mat mask = mat.MedianBlur(7);
+            Cv2.CvtColor(mask, mask, ColorConversionCodes.BGR2HSV);
+            Cv2.InRange(mask, new Scalar(Hlow, Slow, Vlow), new Scalar(Hup, Sup, Vup), mask);
+            Cv2.BitwiseNot(mask, mask);
             return mask;
         }
     }

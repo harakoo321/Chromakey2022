@@ -29,23 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.numHup = new System.Windows.Forms.NumericUpDown();
             this.lblHup = new System.Windows.Forms.Label();
-            this.numHlow = new System.Windows.Forms.NumericUpDown();
             this.lblHlow = new System.Windows.Forms.Label();
             this.lblHue = new System.Windows.Forms.Label();
             this.lblSat = new System.Windows.Forms.Label();
-            this.numSlow = new System.Windows.Forms.NumericUpDown();
-            this.numSup = new System.Windows.Forms.NumericUpDown();
-            this.numVlow = new System.Windows.Forms.NumericUpDown();
-            this.numVup = new System.Windows.Forms.NumericUpDown();
             this.lblVal = new System.Windows.Forms.Label();
             this.lbBack = new System.Windows.Forms.ListBox();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.RemoveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.btnStart = new System.Windows.Forms.Button();
             this.cBoxCam1 = new System.Windows.Forms.ComboBox();
             this.lblCam1 = new System.Windows.Forms.Label();
@@ -76,50 +67,39 @@
             this.btnTransN = new System.Windows.Forms.Button();
             this.btnrenew = new System.Windows.Forms.Button();
             this.AddBackGround = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.numHup)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numHlow)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSlow)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSup)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numVlow)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numVup)).BeginInit();
+            this.hue_upper = new System.Windows.Forms.TrackBar();
+            this.hue_lower = new System.Windows.Forms.TrackBar();
+            this.saturation_lower = new System.Windows.Forms.TrackBar();
+            this.saturation_upper = new System.Windows.Forms.TrackBar();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.value_lower = new System.Windows.Forms.TrackBar();
+            this.value_upper = new System.Windows.Forms.TrackBar();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.hue_upper)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hue_lower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saturation_lower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saturation_upper)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.value_lower)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.value_upper)).BeginInit();
             this.SuspendLayout();
-            // 
-            // numHup
-            // 
-            this.numHup.Location = new System.Drawing.Point(145, 255);
-            this.numHup.Maximum = new decimal(new int[] {
-            180,
-            0,
-            0,
-            0});
-            this.numHup.Name = "numHup";
-            this.numHup.Size = new System.Drawing.Size(55, 19);
-            this.numHup.TabIndex = 6;
-            this.numHup.ValueChanged += new System.EventHandler(this.NumHup_ValueChanged);
             // 
             // lblHup
             // 
             this.lblHup.AutoSize = true;
-            this.lblHup.Location = new System.Drawing.Point(153, 240);
+            this.lblHup.Location = new System.Drawing.Point(218, 246);
             this.lblHup.Name = "lblHup";
             this.lblHup.Size = new System.Drawing.Size(35, 12);
             this.lblHup.TabIndex = 1;
             this.lblHup.Text = "Upper";
             // 
-            // numHlow
-            // 
-            this.numHlow.Location = new System.Drawing.Point(66, 255);
-            this.numHlow.Name = "numHlow";
-            this.numHlow.Size = new System.Drawing.Size(55, 19);
-            this.numHlow.TabIndex = 5;
-            this.numHlow.ValueChanged += new System.EventHandler(this.NumHdown_ValueChanged);
-            // 
             // lblHlow
             // 
             this.lblHlow.AutoSize = true;
-            this.lblHlow.Location = new System.Drawing.Point(73, 240);
+            this.lblHlow.Location = new System.Drawing.Point(218, 264);
             this.lblHlow.Name = "lblHlow";
             this.lblHlow.Size = new System.Drawing.Size(35, 12);
             this.lblHlow.TabIndex = 3;
@@ -128,71 +108,29 @@
             // lblHue
             // 
             this.lblHue.AutoSize = true;
-            this.lblHue.Location = new System.Drawing.Point(35, 257);
+            this.lblHue.Location = new System.Drawing.Point(12, 255);
             this.lblHue.Name = "lblHue";
-            this.lblHue.Size = new System.Drawing.Size(25, 12);
+            this.lblHue.Size = new System.Drawing.Size(29, 12);
             this.lblHue.TabIndex = 4;
-            this.lblHue.Text = "Hue";
+            this.lblHue.Text = "色相";
             // 
             // lblSat
             // 
             this.lblSat.AutoSize = true;
-            this.lblSat.Location = new System.Drawing.Point(3, 282);
+            this.lblSat.Location = new System.Drawing.Point(12, 318);
             this.lblSat.Name = "lblSat";
-            this.lblSat.Size = new System.Drawing.Size(57, 12);
+            this.lblSat.Size = new System.Drawing.Size(29, 12);
             this.lblSat.TabIndex = 5;
-            this.lblSat.Text = "Saturation";
-            // 
-            // numSlow
-            // 
-            this.numSlow.Location = new System.Drawing.Point(66, 280);
-            this.numSlow.Name = "numSlow";
-            this.numSlow.Size = new System.Drawing.Size(55, 19);
-            this.numSlow.TabIndex = 7;
-            this.numSlow.ValueChanged += new System.EventHandler(this.NumSdown_ValueChanged);
-            // 
-            // numSup
-            // 
-            this.numSup.Location = new System.Drawing.Point(145, 280);
-            this.numSup.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.numSup.Name = "numSup";
-            this.numSup.Size = new System.Drawing.Size(55, 19);
-            this.numSup.TabIndex = 8;
-            this.numSup.ValueChanged += new System.EventHandler(this.NumSup_ValueChanged);
-            // 
-            // numVlow
-            // 
-            this.numVlow.Location = new System.Drawing.Point(66, 305);
-            this.numVlow.Name = "numVlow";
-            this.numVlow.Size = new System.Drawing.Size(55, 19);
-            this.numVlow.TabIndex = 9;
-            this.numVlow.ValueChanged += new System.EventHandler(this.NumVdown_ValueChanged);
-            // 
-            // numVup
-            // 
-            this.numVup.Location = new System.Drawing.Point(145, 305);
-            this.numVup.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.numVup.Name = "numVup";
-            this.numVup.Size = new System.Drawing.Size(55, 19);
-            this.numVup.TabIndex = 10;
-            this.numVup.ValueChanged += new System.EventHandler(this.NumVup_ValueChanged);
+            this.lblSat.Text = "彩度";
             // 
             // lblVal
             // 
             this.lblVal.AutoSize = true;
-            this.lblVal.Location = new System.Drawing.Point(26, 307);
+            this.lblVal.Location = new System.Drawing.Point(12, 385);
             this.lblVal.Name = "lblVal";
-            this.lblVal.Size = new System.Drawing.Size(34, 12);
+            this.lblVal.Size = new System.Drawing.Size(29, 12);
             this.lblVal.TabIndex = 10;
-            this.lblVal.Text = "Value";
+            this.lblVal.Text = "明度";
             // 
             // lbBack
             // 
@@ -211,41 +149,14 @@
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.RemoveToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(99, 26);
             // 
             // RemoveToolStripMenuItem
             // 
             this.RemoveToolStripMenuItem.Name = "RemoveToolStripMenuItem";
-            this.RemoveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.RemoveToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             this.RemoveToolStripMenuItem.Text = "削除";
             this.RemoveToolStripMenuItem.Click += new System.EventHandler(this.LbBack_RemoveToolStripMenuItem_Click);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(122, 257);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(17, 12);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "～";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(122, 282);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(17, 12);
-            this.label2.TabIndex = 13;
-            this.label2.Text = "～";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(122, 307);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(17, 12);
-            this.label3.TabIndex = 14;
-            this.label3.Text = "～";
             // 
             // btnStart
             // 
@@ -359,34 +270,34 @@
             this.showInFolderToolStripMenuItem,
             this.printToolStripMenuItem});
             this.captureToolStripMenuItem.Name = "captureToolStripMenuItem";
-            this.captureToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.captureToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.captureToolStripMenuItem.Text = "キャプチャ";
             // 
             // captureToolStripMenuItem1
             // 
             this.captureToolStripMenuItem1.Name = "captureToolStripMenuItem1";
-            this.captureToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.captureToolStripMenuItem1.Size = new System.Drawing.Size(137, 22);
             this.captureToolStripMenuItem1.Text = "キャプチャする";
             this.captureToolStripMenuItem1.Click += new System.EventHandler(this.CaptureToolStripMenuItem1_Click);
             // 
             // showInFolderToolStripMenuItem
             // 
             this.showInFolderToolStripMenuItem.Name = "showInFolderToolStripMenuItem";
-            this.showInFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showInFolderToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.showInFolderToolStripMenuItem.Text = "フォルダを開く";
             this.showInFolderToolStripMenuItem.Click += new System.EventHandler(this.ShowInFolderToolStripMenuItem_Click);
             // 
             // printToolStripMenuItem
             // 
             this.printToolStripMenuItem.Name = "printToolStripMenuItem";
-            this.printToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.printToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.printToolStripMenuItem.Text = "印刷";
             this.printToolStripMenuItem.Click += new System.EventHandler(this.PrintToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.ExitToolStripMenuItem.Text = "終了";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
@@ -527,11 +438,117 @@
             this.AddBackGround.UseVisualStyleBackColor = true;
             this.AddBackGround.Click += new System.EventHandler(this.AddBackGround_Click);
             // 
+            // hue_upper
+            // 
+            this.hue_upper.Location = new System.Drawing.Point(47, 231);
+            this.hue_upper.Maximum = 255;
+            this.hue_upper.Name = "hue_upper";
+            this.hue_upper.Size = new System.Drawing.Size(165, 45);
+            this.hue_upper.TabIndex = 37;
+            this.hue_upper.Value = 255;
+            this.hue_upper.ValueChanged += new System.EventHandler(this.Hue_UpperChanged);
+            // 
+            // hue_lower
+            // 
+            this.hue_lower.Location = new System.Drawing.Point(47, 261);
+            this.hue_lower.Maximum = 255;
+            this.hue_lower.Name = "hue_lower";
+            this.hue_lower.Size = new System.Drawing.Size(165, 45);
+            this.hue_lower.TabIndex = 38;
+            this.hue_lower.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.hue_lower.ValueChanged += new System.EventHandler(this.Hue_LowerChanged);
+            // 
+            // saturation_lower
+            // 
+            this.saturation_lower.Location = new System.Drawing.Point(47, 323);
+            this.saturation_lower.Maximum = 255;
+            this.saturation_lower.Name = "saturation_lower";
+            this.saturation_lower.Size = new System.Drawing.Size(165, 45);
+            this.saturation_lower.TabIndex = 42;
+            this.saturation_lower.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.saturation_lower.ValueChanged += new System.EventHandler(this.Saturation_LowerChanged);
+            // 
+            // saturation_upper
+            // 
+            this.saturation_upper.Location = new System.Drawing.Point(47, 293);
+            this.saturation_upper.Maximum = 255;
+            this.saturation_upper.Name = "saturation_upper";
+            this.saturation_upper.Size = new System.Drawing.Size(165, 45);
+            this.saturation_upper.TabIndex = 41;
+            this.saturation_upper.Value = 255;
+            this.saturation_upper.ValueChanged += new System.EventHandler(this.Saturation_UpperChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(218, 326);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 12);
+            this.label1.TabIndex = 40;
+            this.label1.Text = "Lower";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(218, 308);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(35, 12);
+            this.label2.TabIndex = 39;
+            this.label2.Text = "Upper";
+            // 
+            // value_lower
+            // 
+            this.value_lower.Location = new System.Drawing.Point(47, 390);
+            this.value_lower.Maximum = 255;
+            this.value_lower.Name = "value_lower";
+            this.value_lower.Size = new System.Drawing.Size(165, 45);
+            this.value_lower.TabIndex = 46;
+            this.value_lower.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.value_lower.ValueChanged += new System.EventHandler(this.Value_LowerChanged);
+            // 
+            // value_upper
+            // 
+            this.value_upper.Location = new System.Drawing.Point(47, 360);
+            this.value_upper.Maximum = 255;
+            this.value_upper.Name = "value_upper";
+            this.value_upper.Size = new System.Drawing.Size(165, 45);
+            this.value_upper.TabIndex = 45;
+            this.value_upper.Value = 255;
+            this.value_upper.ValueChanged += new System.EventHandler(this.Value_UpperChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(218, 393);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(35, 12);
+            this.label3.TabIndex = 44;
+            this.label3.Text = "Lower";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(218, 375);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 12);
+            this.label4.TabIndex = 43;
+            this.label4.Text = "Upper";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(559, 452);
+            this.Controls.Add(this.value_lower);
+            this.Controls.Add(this.value_upper);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.saturation_lower);
+            this.Controls.Add(this.saturation_upper);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.hue_lower);
+            this.Controls.Add(this.hue_upper);
             this.Controls.Add(this.AddBackGround);
             this.Controls.Add(this.btnrenew);
             this.Controls.Add(this.btnSynthesis);
@@ -555,57 +572,38 @@
             this.Controls.Add(this.lblCam1);
             this.Controls.Add(this.cBoxCam1);
             this.Controls.Add(this.btnStart);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.lbBack);
             this.Controls.Add(this.lblVal);
-            this.Controls.Add(this.numVup);
-            this.Controls.Add(this.numVlow);
-            this.Controls.Add(this.numSup);
-            this.Controls.Add(this.numSlow);
             this.Controls.Add(this.lblSat);
             this.Controls.Add(this.lblHue);
             this.Controls.Add(this.lblHlow);
-            this.Controls.Add(this.numHlow);
             this.Controls.Add(this.lblHup);
-            this.Controls.Add(this.numHup);
             this.Controls.Add(this.menuStrip1);
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "Chromakey NakanoLAB";
             this.Load += new System.EventHandler(this.Form1_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.numHup)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numHlow)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSlow)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numSup)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numVlow)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numVup)).EndInit();
             this.contextMenuStrip1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.hue_upper)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.hue_lower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saturation_lower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.saturation_upper)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.value_lower)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.value_upper)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.NumericUpDown numHup;
         private System.Windows.Forms.Label lblHup;
-        private System.Windows.Forms.NumericUpDown numHlow;
         private System.Windows.Forms.Label lblHlow;
         private System.Windows.Forms.Label lblHue;
         private System.Windows.Forms.Label lblSat;
-        private System.Windows.Forms.NumericUpDown numSlow;
-        private System.Windows.Forms.NumericUpDown numSup;
-        private System.Windows.Forms.NumericUpDown numVlow;
-        private System.Windows.Forms.NumericUpDown numVup;
         private System.Windows.Forms.Label lblVal;
         private System.Windows.Forms.ListBox lbBack;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.ComboBox cBoxCam1;
         private System.Windows.Forms.Label lblCam1;
@@ -638,6 +636,16 @@
         private System.Windows.Forms.Button AddBackGround;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem RemoveToolStripMenuItem;
+        private System.Windows.Forms.TrackBar hue_upper;
+        private System.Windows.Forms.TrackBar hue_lower;
+        private System.Windows.Forms.TrackBar saturation_lower;
+        private System.Windows.Forms.TrackBar saturation_upper;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TrackBar value_lower;
+        private System.Windows.Forms.TrackBar value_upper;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }
 

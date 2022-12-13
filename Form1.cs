@@ -39,12 +39,12 @@ namespace Chromakey_NakanoLab
         private void Form1_Load(object sender, EventArgs e)
         {
             //HSV初期設定
-            numHlow.Value = 40;
-            numHup.Value = 80;
-            numSlow.Value = 80;
-            numSup.Value = 255;
-            numVlow.Value = 50;
-            numVup.Value = 255;
+            hue_lower.Value = 40;
+            hue_upper.Value = 80;
+            saturation_lower.Value = 80;
+            saturation_upper.Value = 255;
+            value_lower.Value = 50;
+            value_upper.Value = 255;
 
             cBoxCam2.Items.Add("選択しない");
 
@@ -82,40 +82,58 @@ namespace Chromakey_NakanoLab
             Application.ApplicationExit -= new EventHandler(Application_ApplicationExit);
         }
 
-        private void NumHdown_ValueChanged(object sender, EventArgs e)
+        private void Hue_LowerChanged(object sender, EventArgs e)
         {
-            numHup.Minimum = numHlow.Value + 1;
-            ck.Hlow = (int)numHlow.Value;
+            if (hue_lower.Value >= hue_upper.Value)
+            {
+                hue_lower.Value = hue_upper.Value - 1;
+            }
+            ck.Hlow = hue_lower.Value;
         }
 
-        private void NumHup_ValueChanged(object sender, EventArgs e)
+        private void Hue_UpperChanged(object sender, EventArgs e)
         {
-            numHlow.Maximum = numHup.Value - 1;
-            ck.Hup = (int)numHup.Value;
+            if (hue_upper.Value <= hue_lower.Value)
+            {
+                hue_upper.Value = hue_lower.Value + 1;
+            }
+            ck.Hup = hue_upper.Value;
         }
 
-        private void NumSdown_ValueChanged(object sender, EventArgs e)
+        private void Saturation_LowerChanged(object sender, EventArgs e)
         {
-            numSup.Minimum = numSlow.Value + 1;
-            ck.Slow = (int)numSlow.Value;
+            if (saturation_lower.Value >= saturation_upper.Value)
+            {
+                saturation_lower.Value = saturation_upper.Value - 1;
+            }
+            ck.Slow = saturation_lower.Value;
         }
 
-        private void NumSup_ValueChanged(object sender, EventArgs e)
+        private void Saturation_UpperChanged(object sender, EventArgs e)
         {
-            numSlow.Maximum = numSup.Value - 1;
-            ck.Sup = (int)numSup.Value;
+            if (saturation_upper.Value <= saturation_lower.Value)
+            {
+                saturation_upper.Value = saturation_lower.Value + 1;
+            }
+            ck.Sup = saturation_upper.Value;
         }
 
-        private void NumVdown_ValueChanged(object sender, EventArgs e)
+        private void Value_LowerChanged(object sender, EventArgs e)
         {
-            numVup.Minimum = numVlow.Value + 1;
-            ck.Vlow = (int)numVlow.Value;
+            if (value_lower.Value >= value_upper.Value)
+            {
+                value_lower.Value = value_upper.Value - 1;
+            }
+            ck.Vlow = value_lower.Value;
         }
 
-        private void NumVup_ValueChanged(object sender, EventArgs e)
+        private void Value_UpperChanged(object sender, EventArgs e)
         {
-            numVlow.Maximum = numVup.Value - 1;
-            ck.Vup = (int)numVup.Value;
+            if (value_upper.Value <= value_lower.Value)
+            {
+                value_upper.Value = value_lower.Value + 1;
+            }
+            ck.Vup = value_upper.Value;
         }
 
         private void BtnStart_Click(object sender, EventArgs e)
@@ -299,6 +317,13 @@ namespace Chromakey_NakanoLab
             ck.Rotate = 0.0;
             ck.TransX = 0.0;
             ck.TransY = 0.0;
+
+            hue_lower.Value = 40;
+            hue_upper.Value = 80;
+            saturation_lower.Value = 80;
+            saturation_upper.Value = 255;
+            value_lower.Value = 50;
+            value_upper.Value = 255;
         }
 
         //更新
@@ -309,6 +334,10 @@ namespace Chromakey_NakanoLab
             this.Close();
             frm1.Show();
             */
+
+            ck.Stop();
+            btnStart.Enabled = true;
+            btnFlip.Enabled = false;
         }
 
         //縮尺
