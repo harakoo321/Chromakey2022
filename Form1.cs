@@ -154,17 +154,26 @@ namespace Chromakey_NakanoLab
                 lbBack.Items.Add("Camera2");
         }
 
+        private void BtnStop_Click(object sender, EventArgs e)
+        {
+            ck.Stop();
+            btnStart.Enabled = true;
+            btnFlip.Enabled = false;
+            btnCapture.Enabled = false;
+            btnSynthesis.Enabled = false;
+        }
+
         private void BtnFlip_Click(object sender, EventArgs e)
         {
             if (ck.flgFlip)
             {
                 ck.flgFlip = false;
-                btnFlip.Text = "Flip ON";
+                btnFlip.Text = "反転 ON";
             }
             else
             {
                 ck.flgFlip = true;
-                btnFlip.Text = "Flip OFF";
+                btnFlip.Text = "反転 OFF";
             }
         }
 
@@ -329,15 +338,10 @@ namespace Chromakey_NakanoLab
         //更新
         private void Btnrenew_Click(object sender, EventArgs e)
         {
-            /*
-            Form1 frm1 = new Form1();
-            this.Close();
-            frm1.Show();
-            */
-
             ck.Stop();
             btnStart.Enabled = true;
             btnFlip.Enabled = false;
+            Application.Restart();
         }
 
         //縮尺
