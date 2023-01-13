@@ -20,19 +20,19 @@ namespace Chromakey_NakanoLab
         Chromakey ck; //このクラスはChromakey.csに記述されている。
         DateTime dt;
         private XmlEditor bgxml;
-        private List<String> bgname = new List<string>();
-        private List<String> bgpath = new List<string>();
+        private List<string> bgname = new List<string>();
+        private List<string> bgpath = new List<string>();
 
         public Form1()
         {
             InitializeComponent();
             bgxml = new XmlEditor("background.xml");
-            bgxml.XmlReadItem(bgname, "name");
-            bgxml.XmlReadItem(bgpath, "path");
+            bgxml.XmlReadItem(bgname, "name"); //XMLファイルから画像名のリストの取得
+            bgxml.XmlReadItem(bgpath, "path"); //XMLファイルからパスのリストの取得
             ck = new Chromakey();
             for (int i = 0; i < bgpath.Count; i++)
             {
-                ck.SetBackground(bgpath[i]);
+                ck.SetBackground(bgpath[i]); //背景画像のリストのセット
             }
         }
 
@@ -198,7 +198,7 @@ namespace Chromakey_NakanoLab
             btnPrint.Enabled = true;
         }
 
-        private void LbBack_MouseUp(object sender, MouseEventArgs e)
+        private void LbBack_MouseUp(object sender, MouseEventArgs e) //背景画像リストを右クリックした時の処理
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -206,7 +206,7 @@ namespace Chromakey_NakanoLab
             }
         }
 
-        private void LbBack_RemoveToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LbBack_RemoveToolStripMenuItem_Click(object sender, EventArgs e) //背景画像リストを右クリックし、削除をクリックした時の処理
         {
             if (MessageBox.Show(lbBack.Text + "を削除しますか？", "確認", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {

@@ -22,7 +22,7 @@ namespace Chromakey2022
 
         private void Selectimg_Click(object sender, EventArgs e)    //画像ファイルの選択を行うダイアログの表示
         {
-            openFileDialog1.Filter = "Image File|*.bmp;*.png;*.jpg;*.jpeg";
+            openFileDialog1.Filter = "Image File|*.bmp;*.png;*.jpg;*.jpeg"; //ファイル形式のフィルター
             if (openFileDialog1.ShowDialog(this) == DialogResult.OK)
             {
                 img_path.Text = openFileDialog1.FileName;

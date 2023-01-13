@@ -11,7 +11,6 @@ using System.Xml.Linq;
 namespace Chromakey2022
 {
     //xmlファイルを編集するためのクラス
-    //再利用性を意識したつもり
     public class XmlEditor
     {
         private XElement xml;
@@ -35,7 +34,7 @@ namespace Chromakey2022
         public void XmlReadItem(List<string> datalist, string tag)  //指定したタグの要素を配列に格納するメソッド
         {
             datalist.Clear();   //データを格納する配列のクリア
-            IEnumerable<string> infos = from item in xml.Elements().Elements(tag) select item.Value;        //指定したタグの要素を取得
+            IEnumerable<string> infos = from item in xml.Elements().Elements(tag) select item.Value; //指定したタグの要素を取得
 
             foreach (string info in infos)
             {
@@ -43,7 +42,7 @@ namespace Chromakey2022
             }
         }
 
-        public void XmlRemove(string tag)
+        public void XmlRemove(string tag) //指定した要素の削除
         {
             var emp = from p in xml.Descendants("picture") where p.Element("name").Value == tag select p;
             emp.Remove();

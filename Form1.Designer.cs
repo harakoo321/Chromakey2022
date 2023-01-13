@@ -448,17 +448,17 @@
             // hue_upper
             // 
             this.hue_upper.Location = new System.Drawing.Point(43, 236);
-            this.hue_upper.Maximum = 255;
+            this.hue_upper.Maximum = 179;
             this.hue_upper.Name = "hue_upper";
             this.hue_upper.Size = new System.Drawing.Size(165, 45);
             this.hue_upper.TabIndex = 37;
-            this.hue_upper.Value = 255;
+            this.hue_upper.Value = 179;
             this.hue_upper.ValueChanged += new System.EventHandler(this.Hue_UpperChanged);
             // 
             // hue_lower
             // 
             this.hue_lower.Location = new System.Drawing.Point(43, 266);
-            this.hue_lower.Maximum = 255;
+            this.hue_lower.Maximum = 179;
             this.hue_lower.Name = "hue_lower";
             this.hue_lower.Size = new System.Drawing.Size(165, 45);
             this.hue_lower.TabIndex = 38;

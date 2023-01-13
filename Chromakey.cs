@@ -17,7 +17,7 @@ namespace Chromakey2022
         public int bgIndex = 0;
         public int Hlow = 40, Hup = 80, Slow = 80, Sup = 255, Vlow = 50, Vup = 255;
         public double Scale = 1.0, Rotate = 0.0, TransX = 0.0, TransY = 0.0;
-        private List<Mat> bglist = new List<Mat>();
+        private List<Mat> bgList = new List<Mat>();
         private int cntCam = 0, cntBg = 0; //カメラの個数,背景の個数
         private bool flgRun = false;
         private bool flgCap = false;
@@ -45,7 +45,7 @@ namespace Chromakey2022
             this.cam1 = cam1;
             this.cam2 = cam2;
             Thread th1 = new Thread(new ThreadStart(Capture));
-            th1.Start();
+            th1.Start(); //スレッドの起動
         }
 
         public int Numofcam()   //カメラの接続台数を返す
@@ -55,12 +55,12 @@ namespace Chromakey2022
 
         public void SetBackground(string path)   //背景画像を可変長配列bglistに追加
         {
-            bglist.Add(Cv2.ImRead(path));
+            bgList.Add(Cv2.ImRead(path));
         }
 
-        public void RemoveBackground(int selectedIndex)
+        public void RemoveBackground(int selectedIndex) //指定した背景画像の削除
         {
-            bglist.RemoveAt(selectedIndex);
+            bgList.RemoveAt(selectedIndex);
         }
 
         public void Stop()  //flgRunフラグをfalseにセット
@@ -72,9 +72,11 @@ namespace Chromakey2022
         {
             flgCap = true;
             while (flgCap) { }  //flgCapがfalseになるまで待つ
-            Bitmap bitmap = (Bitmap)bmp.Clone();
-            bmp.Dispose();
-            return bitmap;
+            using (Bitmap bitmap = (Bitmap)bmp.Clone())
+            {
+                bmp.Dispose();
+                return bitmap;
+            }
         }
 
         private void Capture()
@@ -96,7 +98,7 @@ namespace Chromakey2022
                 if (cap2.IsOpened())
                 {
                     cap2.Read(temp);
-                    bglist.Add(temp);
+                    bgList.Add(temp);
                 }
             }
 
@@ -104,45 +106,39 @@ namespace Chromakey2022
 
             while (flgRun)
             {
-                sw.Restart();
-                
+                sw.Restart(); //処理時間の計測開始
+
                 Mat flame = new Mat(); //カメラ画像
-                Mat mask; //マスク画像（緑部分を黒、それ以外を白）
-                Mat img = new Mat(); //最終的に表示する画像
+                Mat showImg = new Mat(); //最終的に表示する画像
                 Mat flipImg = new Mat(); //最終的に表示する反転画像
 
                 //カメラからフレームを取得
                 cap1.Read(flame);
                 cap2.Read(temp);
 
-                double resize_ratio = (double)flame.Width / (double)bglist[bgIndex].Width;  //背景画像をカメラの横幅に合わせるための倍率の算出
+                double resizeRatio = (double)flame.Width / (double)bgList[bgIndex].Width;  //背景画像をカメラの横幅に合わせるための倍率の算出
 
-                if (resize_ratio <= 0) {
+                if (resizeRatio <= 0) { //カメラが切断されたらresizeRatioが0になる
                     MessageBox.Show("カメラが切断されました。", "エラー", MessageBoxButtons.OK);
                     break;
                 }
                 
-                Cv2.Resize(bglist[bgIndex], img, new OpenCvSharp.Size(), resize_ratio, resize_ratio); //  リサイズした背景画像の取得
+                Cv2.Resize(bgList[bgIndex], showImg, new OpenCvSharp.Size(), resizeRatio, resizeRatio); //リサイズした背景画像の取得
+                Mat transformedFlame = TransformMat(flame, showImg.Height, showImg.Width); //取得したフレームの回転、縮小・拡大、移動
+                Mat maskImg = GetMask2(transformedFlame); //マスクの作成（緑部分を黒、それ以外を白）
+                //Cv2.ImShow("ChromakeySrc", transformedFlame);
+                //Cv2.ImShow("ChromakeyMask", maskImg);
 
-                Mat converted_flame = new Mat(img.Rows, img.Cols, img.Type(), new Scalar(0,255,0)); //緑で塗りつぶした画像
+                transformedFlame.CopyTo(showImg, maskImg); //マスク処理：元の画像、背景画像、マスクを合わせる
+                if(flgFlip) Cv2.Flip(showImg, showImg, FlipMode.Y); //反転がオンの場合反転
 
-                Mat mat = Cv2.GetRotationMatrix2D(new Point2f(flame.Cols / 2, flame.Rows / 2), Rotate, Scale);  //flameの中心座標の取得し、回転後の座標を取得 引数:中心、回転角度、大きさ
-                mat.At<double>(0, 2) += TransX; //x方向への移動
-                mat.At<double>(1, 2) += TransY; //y方向への移動
-                Cv2.WarpAffine(flame, converted_flame, mat, img.Size(), InterpolationFlags.Linear, BorderTypes.Transparent); //アフィン変換 (元画像、変換後画像、変換行列、大きさ、補完方法、ピクセル外挿方法)
-
-                mask = GetMask2(converted_flame);//マスクの作成
-
-                converted_flame.CopyTo(img, mask);//マスク処理：元の画像、背景画像、マスクを合わせる
-                if(flgFlip) Cv2.Flip(img, img, FlipMode.Y);
-
-                Cv2.Flip(img, flipImg, FlipMode.Y);
-                Cv2.ImShow("ChromakeyFlip", flipImg); //反転画像
-                Cv2.ImShow("Chromakey", img); //最終的な画像
+                Cv2.Flip(showImg, flipImg, FlipMode.Y);
+                Cv2.ImShow("ChromakeyFlip", flipImg); //showImgの反転画像の表示
+                Cv2.ImShow("Chromakey", showImg); //最終的な画像の表示
 
                 if(flgCap)  //キャプチャー
                 {
-                    bmp = BitmapConverter.ToBitmap(img);
+                    bmp = BitmapConverter.ToBitmap(showImg); //ビットマップ画像の取得
                     flgCap = false;
                 }
 
@@ -150,59 +146,75 @@ namespace Chromakey2022
 
                 //以下リソースの解放
                 flame.Dispose();
-                mask.Dispose();
-                img.Dispose();
+                maskImg.Dispose();
+                showImg.Dispose();
                 flipImg.Dispose();
-                converted_flame.Dispose();
-                mat.Dispose();
+                transformedFlame.Dispose();
 
-                sw.Stop();
-                Console.WriteLine(1 / (sw.ElapsedMilliseconds * 0.001));
+                sw.Stop(); //計測終了
+                Console.WriteLine(1 / (sw.ElapsedMilliseconds * 0.001)); //フレームレートの算出
             }
             Cv2.DestroyAllWindows();
             cap1.Dispose();
             cap2.Dispose();
         }
 
-        private Mat GetMask(Mat src_img)
+        private Mat TransformMat(Mat src, int height, int width)
         {
-            Mat temp = src_img.Clone(); //カメラ画像
-            Mat mask = new Mat(temp.Rows, temp.Cols, MatType.CV_8UC3, new Scalar(255, 255, 255));
-            Cv2.MedianBlur(temp, temp, 7);
+            Mat dst = new Mat(height, width, src.Type(), new Scalar(0, 255, 0)); //緑で塗りつぶした画像
+            Mat temp = Cv2.GetRotationMatrix2D(new Point2f(src.Cols / 2, src.Rows / 2), Rotate, Scale);  //flameの中心座標の取得し、回転後の座標を取得 引数:中心、回転角度、大きさ
+            
+            temp.At<double>(0, 2) += TransX; //x方向への移動
+            temp.At<double>(1, 2) += TransY; //y方向への移動
+            
+            Cv2.WarpAffine(src, dst, temp, new OpenCvSharp.Size(width, height), InterpolationFlags.Linear, BorderTypes.Transparent); //アフィン変換 (元画像、変換後画像、変換行列、大きさ、補完方法、ピクセル外挿方法)
+            
+            temp.Dispose();
+            return dst;
+        }
+
+        private Mat GetMask(Mat src) //ポインタを使った方法
+        {
+            Mat temp = src.Clone(); //カメラ画像
+            Mat dst = new Mat(temp.Rows, temp.Cols, MatType.CV_8UC3, new Scalar(255, 255, 255)); //黒の画像を用意
+            Cv2.MedianBlur(temp, temp, 7); //ブラー処理
             Cv2.CvtColor(temp, temp, ColorConversionCodes.BGR2HSV); //HSV変換
 
             unsafe
             {
                 byte* temp_px = temp.DataPointer;
-                byte* mask_px = mask.DataPointer;
+                byte* mask_px = dst.DataPointer;
                 for (int y = 0; y < temp.Rows; y++)
                 {
                     for (int x = 0; x < temp.Cols; x++)
                     {
+                        //透過させる色の範囲内かどうか1ピクセルずつ判定する
                         if (temp_px[0] >= Hlow && temp_px[0] <= Hup &&
                             temp_px[1] >= Slow && temp_px[1] <= Sup &&
                             temp_px[2] >= Vlow && temp_px[2] <= Vup)
                         {
+                            //範囲内であればHue,Saturation,Valueを0にし、白にする
                             mask_px[0] = 0x00;
                             mask_px[1] = 0x00;
                             mask_px[2] = 0x00;
                         }
+                        //ピクセル1つ分ポインタを進める
                         temp_px += 3;
                         mask_px += 3;
                     }
                 }
             }
             temp.Dispose();
-            return mask;
+            return dst;
         }
 
-        private Mat GetMask2(Mat mat)
+        private Mat GetMask2(Mat src) //InRange()とBitwiseNot()を使った方法(こっちが高速)
         {
-            Mat mask = mat.MedianBlur(7);
-            Cv2.CvtColor(mask, mask, ColorConversionCodes.BGR2HSV);
-            Cv2.InRange(mask, new Scalar(Hlow, Slow, Vlow), new Scalar(Hup, Sup, Vup), mask);
-            Cv2.BitwiseNot(mask, mask);
-            return mask;
+            Mat dst = src.MedianBlur(7); //ブラー処理
+            Cv2.CvtColor(dst, dst, ColorConversionCodes.BGR2HSV); //HSVに変換
+            Cv2.InRange(dst, new Scalar(Hlow, Slow, Vlow), new Scalar(Hup, Sup, Vup), dst); //指定した色の範囲内の部分を黒、それ以外を白にする
+            Cv2.BitwiseNot(dst, dst); //行列のすべてのビットをを反転させる
+            return dst;
         }
     }
 }
