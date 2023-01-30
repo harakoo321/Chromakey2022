@@ -22,7 +22,7 @@ namespace Chromakey2022
         private bool flgRun = false;
         private bool flgCap = false;
         private int cam1, cam2;
-        private Bitmap bmp;
+        private Mat matToBmp;
 
         public Chromakey()  //コンストラクタ
         {
@@ -71,12 +71,8 @@ namespace Chromakey2022
         public Bitmap GetImage()   //flgCapフラグをtrueにセット後、Bitmap画像を返す
         {
             flgCap = true;
-            while (flgCap) { }  //flgCapがfalseになるまで待つ
-            using (Bitmap bitmap = (Bitmap)bmp.Clone())
-            {
-                bmp.Dispose();
-                return bitmap;
-            }
+            Thread.Sleep(1000);  //flgCapがfalseになるまで待つ
+            return BitmapConverter.ToBitmap(matToBmp);
         }
 
         private void Capture()
@@ -138,7 +134,8 @@ namespace Chromakey2022
 
                 if(flgCap)  //キャプチャー
                 {
-                    bmp = BitmapConverter.ToBitmap(showImg); //ビットマップ画像の取得
+                    if(matToBmp != null) matToBmp.Dispose();
+                    matToBmp = showImg.Clone(); //ビットマップ画像の取得
                     flgCap = false;
                 }
 
@@ -161,7 +158,8 @@ namespace Chromakey2022
 
         private Mat TransformMat(Mat src, int height, int width)
         {
-            Mat dst = new Mat(height, width, src.Type(), new Scalar(0, 255, 0)); //緑で塗りつぶした画像
+            Mat dst = new Mat(height, width, src.Type(), new Scalar(Hlow+(Hup-Hlow)/2, Slow+(Sup-Slow)/2, Vlow+(Vup-Vlow)/2));
+            Cv2.CvtColor(dst, dst, ColorConversionCodes.HSV2BGR);
             Mat temp = Cv2.GetRotationMatrix2D(new Point2f(src.Cols / 2, src.Rows / 2), Rotate, Scale);  //flameの中心座標の取得し、回転後の座標を取得 引数:中心、回転角度、大きさ
             
             temp.At<double>(0, 2) += TransX; //x方向への移動
@@ -173,6 +171,7 @@ namespace Chromakey2022
             return dst;
         }
 
+        /*
         private Mat GetMask(Mat src) //ポインタを使った方法
         {
             Mat temp = src.Clone(); //カメラ画像
@@ -207,13 +206,14 @@ namespace Chromakey2022
             temp.Dispose();
             return dst;
         }
+        */
 
         private Mat GetMask2(Mat src) //InRange()とBitwiseNot()を使った方法(こっちが高速)
         {
             Mat dst = src.MedianBlur(7); //ブラー処理
             Cv2.CvtColor(dst, dst, ColorConversionCodes.BGR2HSV); //HSVに変換
             Cv2.InRange(dst, new Scalar(Hlow, Slow, Vlow), new Scalar(Hup, Sup, Vup), dst); //指定した色の範囲内の部分を黒、それ以外を白にする
-            Cv2.BitwiseNot(dst, dst); //行列のすべてのビットをを反転させる
+            Cv2.BitwiseNot(dst, dst); //行列のすべてのビットをを反転させる(白と黒の反転)
             return dst;
         }
     }
