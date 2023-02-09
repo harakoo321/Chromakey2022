@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OpenCvSharp;
-using OpenCvSharp.Extensions;
+
+using Chromakey2022.CvWrapper;
 
 namespace Chromakey2022
 {
@@ -18,7 +18,7 @@ namespace Chromakey2022
         public int Hlow = 40, Hup = 80, Slow = 80, Sup = 255, Vlow = 50, Vup = 255;
         public double Scale = 1.0, Rotate = 0.0, TransX = 0.0, TransY = 0.0;
         private List<Mat> bgList = new List<Mat>();
-        private int cntCam = 0, cntBg = 0; //カメラの個数,背景の個数
+        private int cntCam = 0; //カメラの個数
         private bool flgRun = false;
         private bool flgCap = false;
         private int cam1, cam2;
@@ -26,17 +26,16 @@ namespace Chromakey2022
 
         public Chromakey()  //コンストラクタ
         {
-            using (VideoCapture cap = new VideoCapture())
+            VideoCapture cap = new VideoCapture();
+            while (true)    //カメラ接続台数確認
             {
-                while (true)    //カメラ接続台数確認
+                if (!cap.Open(cntCam))
                 {
-                    if (!cap.Open(cntCam))
-                    {
-                        break;
-                    }
-                    cntCam++;
+                    break;
                 }
+                cntCam++;
             }
+            cap.Dispose();
         }
 
         public void Run(int cam1, int cam2)
@@ -48,9 +47,9 @@ namespace Chromakey2022
             th1.Start(); //スレッドの起動
         }
 
-        public int Numofcam()   //カメラの接続台数を返す
+        public int Numofcam   //カメラの接続台数を返す
         {
-            return cntCam;
+            get { return cntCam; }
         }
 
         public void SetBackground(string path)   //背景画像を可変長配列bglistに追加
@@ -119,16 +118,14 @@ namespace Chromakey2022
                     break;
                 }
                 
-                Cv2.Resize(bgList[bgIndex], showImg, new OpenCvSharp.Size(), resizeRatio, resizeRatio); //リサイズした背景画像の取得
+                Cv2.Resize(bgList[bgIndex], showImg, resizeRatio, resizeRatio); //リサイズした背景画像の取得
                 Mat transformedFlame = TransformMat(flame, showImg.Height, showImg.Width); //取得したフレームの回転、縮小・拡大、移動
                 Mat maskImg = GetMask2(transformedFlame); //マスクの作成（緑部分を黒、それ以外を白）
-                //Cv2.ImShow("ChromakeySrc", transformedFlame);
-                //Cv2.ImShow("ChromakeyMask", maskImg);
 
                 transformedFlame.CopyTo(showImg, maskImg); //マスク処理：元の画像、背景画像、マスクを合わせる
-                if(flgFlip) Cv2.Flip(showImg, showImg, FlipMode.Y); //反転がオンの場合反転
+                if(flgFlip) Cv2.FlipY(showImg, showImg); //反転がオンの場合反転
 
-                Cv2.Flip(showImg, flipImg, FlipMode.Y);
+                Cv2.FlipY(showImg, flipImg);
                 Cv2.ImShow("ChromakeyFlip", flipImg); //showImgの反転画像の表示
                 Cv2.ImShow("Chromakey", showImg); //最終的な画像の表示
 
@@ -158,61 +155,24 @@ namespace Chromakey2022
 
         private Mat TransformMat(Mat src, int height, int width)
         {
-            Mat dst = new Mat(height, width, src.Type(), new Scalar(Hlow+(Hup-Hlow)/2, Slow+(Sup-Slow)/2, Vlow+(Vup-Vlow)/2));
-            Cv2.CvtColor(dst, dst, ColorConversionCodes.HSV2BGR);
-            Mat temp = Cv2.GetRotationMatrix2D(new Point2f(src.Cols / 2, src.Rows / 2), Rotate, Scale);  //flameの中心座標の取得し、回転後の座標を取得 引数:中心、回転角度、大きさ
+            Mat dst = new Mat(height, width, src, Hlow+(Hup-Hlow)/2, Slow+(Sup-Slow)/2, Vlow+(Vup-Vlow)/2);
+            Cv2.CvtColorHSVToBGR(dst, dst);
+            Mat temp = Cv2.GetRotationMatrix2D(src.Width / 2, src.Height / 2, Rotate, Scale);  //flameの中心座標の取得し、回転後の座標を取得 引数:中心、回転角度、大きさ
             
             temp.At<double>(0, 2) += TransX; //x方向への移動
             temp.At<double>(1, 2) += TransY; //y方向への移動
             
-            Cv2.WarpAffine(src, dst, temp, new OpenCvSharp.Size(width, height), InterpolationFlags.Linear, BorderTypes.Transparent); //アフィン変換 (元画像、変換後画像、変換行列、大きさ、補完方法、ピクセル外挿方法)
+            Cv2.WarpAffine(src, dst, temp, width, height); //アフィン変換 (元画像、変換後画像、変換行列、大きさ、補完方法、ピクセル外挿方法)
             
             temp.Dispose();
             return dst;
         }
 
-        /*
-        private Mat GetMask(Mat src) //ポインタを使った方法
-        {
-            Mat temp = src.Clone(); //カメラ画像
-            Mat dst = new Mat(temp.Rows, temp.Cols, MatType.CV_8UC3, new Scalar(255, 255, 255)); //黒の画像を用意
-            Cv2.MedianBlur(temp, temp, 7); //ブラー処理
-            Cv2.CvtColor(temp, temp, ColorConversionCodes.BGR2HSV); //HSV変換
-
-            unsafe
-            {
-                byte* temp_px = temp.DataPointer;
-                byte* mask_px = dst.DataPointer;
-                for (int y = 0; y < temp.Rows; y++)
-                {
-                    for (int x = 0; x < temp.Cols; x++)
-                    {
-                        //透過させる色の範囲内かどうか1ピクセルずつ判定する
-                        if (temp_px[0] >= Hlow && temp_px[0] <= Hup &&
-                            temp_px[1] >= Slow && temp_px[1] <= Sup &&
-                            temp_px[2] >= Vlow && temp_px[2] <= Vup)
-                        {
-                            //範囲内であればHue,Saturation,Valueを0にし、白にする
-                            mask_px[0] = 0x00;
-                            mask_px[1] = 0x00;
-                            mask_px[2] = 0x00;
-                        }
-                        //ピクセル1つ分ポインタを進める
-                        temp_px += 3;
-                        mask_px += 3;
-                    }
-                }
-            }
-            temp.Dispose();
-            return dst;
-        }
-        */
-
         private Mat GetMask2(Mat src) //InRange()とBitwiseNot()を使った方法(こっちが高速)
         {
             Mat dst = src.MedianBlur(7); //ブラー処理
-            Cv2.CvtColor(dst, dst, ColorConversionCodes.BGR2HSV); //HSVに変換
-            Cv2.InRange(dst, new Scalar(Hlow, Slow, Vlow), new Scalar(Hup, Sup, Vup), dst); //指定した色の範囲内の部分を黒、それ以外を白にする
+            Cv2.CvtColorBGRToHSV(dst, dst); //HSVに変換
+            Cv2.InRange(dst, Hlow, Slow, Vlow, Hup, Sup, Vup, dst); //指定した色の範囲内の部分を黒、それ以外を白にする
             Cv2.BitwiseNot(dst, dst); //行列のすべてのビットをを反転させる(白と黒の反転)
             return dst;
         }

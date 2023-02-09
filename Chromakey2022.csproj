@@ -86,6 +86,7 @@
       <DependentUpon>AddBackGround.cs</DependentUpon>
     </Compile>
     <Compile Include="Chromakey.cs" />
+    <Compile Include="CvWrapper.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

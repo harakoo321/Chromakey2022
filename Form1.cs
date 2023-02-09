@@ -48,7 +48,7 @@ namespace Chromakey_NakanoLab
 
             cBoxCam2.Items.Add("選択しない");
 
-            for (int i = 0; i < ck.Numofcam(); i++)
+            for (int i = 0; i < ck.Numofcam; i++)
             {
                 cBoxCam1.Items.Add(i);
                 cBoxCam2.Items.Add(i);
