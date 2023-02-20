@@ -47,30 +47,35 @@ namespace Chromakey2022
             th1.Start(); //スレッドの起動
         }
 
-        public int Numofcam   //カメラの接続台数を返す
+        //カメラの接続台数を返す
+        public int Numofcam
         {
             get { return cntCam; }
         }
 
-        public void SetBackground(string path)   //背景画像を可変長配列bglistに追加
+        //背景画像を可変長配列bglistに追加
+        public void SetBackground(string path)
         {
             bgList.Add(Cv2.ImRead(path));
         }
 
-        public void RemoveBackground(int selectedIndex) //指定した背景画像の削除
+        //指定した背景画像の削除
+        public void RemoveBackground(int selectedIndex)
         {
             bgList.RemoveAt(selectedIndex);
         }
 
-        public void Stop()  //flgRunフラグをfalseにセット
+        //flgRunフラグをfalseにセット
+        public void Stop()
         {
             flgRun = false;
         }
 
-        public Bitmap GetImage()   //flgCapフラグをtrueにセット後、Bitmap画像を返す
+        //flgCapフラグをtrueにセット後、Bitmap画像を返す
+        public Bitmap GetImage()
         {
             flgCap = true;
-            Thread.Sleep(1000);  //flgCapがfalseになるまで待つ
+            Thread.Sleep(1000);
             return BitmapConverter.ToBitmap(matToBmp);
         }
 
@@ -111,7 +116,7 @@ namespace Chromakey2022
                 cap1.Read(flame);
                 cap2.Read(temp);
 
-                double resizeRatio = (double)flame.Width / (double)bgList[bgIndex].Width;  //背景画像をカメラの横幅に合わせるための倍率の算出
+                double resizeRatio = (double)flame.Width / (double)bgList[bgIndex].Width; //背景画像をカメラの横幅に合わせるための倍率の算出
 
                 if (resizeRatio <= 0) { //カメラが切断されたらresizeRatioが0になる
                     MessageBox.Show("カメラが切断されました。", "エラー", MessageBoxButtons.OK);
@@ -120,7 +125,7 @@ namespace Chromakey2022
                 
                 Cv2.Resize(bgList[bgIndex], showImg, resizeRatio, resizeRatio); //リサイズした背景画像の取得
                 Mat transformedFlame = TransformMat(flame, showImg.Height, showImg.Width); //取得したフレームの回転、縮小・拡大、移動
-                Mat maskImg = GetMask2(transformedFlame); //マスクの作成（緑部分を黒、それ以外を白）
+                Mat maskImg = GetMask(transformedFlame); //マスクの作成（緑部分を黒、それ以外を白）
 
                 transformedFlame.CopyTo(showImg, maskImg); //マスク処理：元の画像、背景画像、マスクを合わせる
                 if(flgFlip) Cv2.FlipY(showImg, showImg); //反転がオンの場合反転
@@ -157,18 +162,18 @@ namespace Chromakey2022
         {
             Mat dst = new Mat(height, width, src, Hlow+(Hup-Hlow)/2, Slow+(Sup-Slow)/2, Vlow+(Vup-Vlow)/2);
             Cv2.CvtColorHSVToBGR(dst, dst);
-            Mat temp = Cv2.GetRotationMatrix2D(src.Width / 2, src.Height / 2, Rotate, Scale);  //flameの中心座標の取得し、回転後の座標を取得 引数:中心、回転角度、大きさ
+            Mat temp = Cv2.GetRotationMatrix2D(src.Width / 2, src.Height / 2, Rotate, Scale);  //flameの中心座標の取得し、回転後の座標を取得
             
             temp.At<double>(0, 2) += TransX; //x方向への移動
             temp.At<double>(1, 2) += TransY; //y方向への移動
             
-            Cv2.WarpAffine(src, dst, temp, width, height); //アフィン変換 (元画像、変換後画像、変換行列、大きさ、補完方法、ピクセル外挿方法)
+            Cv2.WarpAffine(src, dst, temp, width, height); //アフィン変換
             
             temp.Dispose();
             return dst;
         }
 
-        private Mat GetMask2(Mat src) //InRange()とBitwiseNot()を使った方法(こっちが高速)
+        private Mat GetMask(Mat src)
         {
             Mat dst = src.MedianBlur(7); //ブラー処理
             Cv2.CvtColorBGRToHSV(dst, dst); //HSVに変換

@@ -65,7 +65,7 @@ namespace Chromakey_NakanoLab
                 btnStart.Enabled = false;
             }
 
-            for (int i = 0; i < bgname.Count; i++) lbBack.Items.Add(bgname[i]);
+            for (int i = 0; i < bgname.Count; i++) lbBack.Items.Add(bgname[i]); //ListBoxに画像名を追加
 
             btnCapture.Enabled = false;
             btnFlip.Enabled = false;
@@ -84,7 +84,7 @@ namespace Chromakey_NakanoLab
 
         private void Hue_LowerChanged(object sender, EventArgs e)
         {
-            if (hue_lower.Value >= hue_upper.Value)
+            if (hue_lower.Value >= hue_upper.Value) //hue_lower.Valueがhue_upper.Value以上にならないようにする
             {
                 hue_lower.Value = hue_upper.Value - 1;
             }
@@ -93,7 +93,7 @@ namespace Chromakey_NakanoLab
 
         private void Hue_UpperChanged(object sender, EventArgs e)
         {
-            if (hue_upper.Value <= hue_lower.Value)
+            if (hue_upper.Value <= hue_lower.Value) //hue_upper.Valueがhue_lower.Value以下にならないようにする
             {
                 hue_upper.Value = hue_lower.Value + 1;
             }
@@ -136,6 +136,7 @@ namespace Chromakey_NakanoLab
             ck.Vup = value_upper.Value;
         }
 
+        //開始
         private void BtnStart_Click(object sender, EventArgs e)
         {
             if (cBoxCam1.SelectedIndex == (cBoxCam2.SelectedIndex - 1))
@@ -154,6 +155,7 @@ namespace Chromakey_NakanoLab
                 lbBack.Items.Add("Camera2");
         }
 
+        //停止
         private void BtnStop_Click(object sender, EventArgs e)
         {
             ck.Stop();
@@ -163,6 +165,7 @@ namespace Chromakey_NakanoLab
             btnSynthesis.Enabled = false;
         }
 
+        //反転
         private void BtnFlip_Click(object sender, EventArgs e)
         {
             if (ck.flgFlip)
@@ -177,6 +180,7 @@ namespace Chromakey_NakanoLab
             }
         }
 
+        //合成
         private void BtnSynthesis_Click(object sender, EventArgs e)
         {
             using (Bitmap bmp = ck.GetImage())
@@ -187,6 +191,7 @@ namespace Chromakey_NakanoLab
             btnPrint.Enabled = false;
         }
 
+        //キャプチャー
         private void BtnCapture_Click(object sender, EventArgs e)
         {
             using (Bitmap bmp = ck.GetImage())
@@ -198,7 +203,8 @@ namespace Chromakey_NakanoLab
             btnPrint.Enabled = true;
         }
 
-        private void LbBack_MouseUp(object sender, MouseEventArgs e) //背景画像リストを右クリックした時の処理
+        //背景画像リストを右クリックした時の処理
+        private void LbBack_MouseUp(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
@@ -206,7 +212,8 @@ namespace Chromakey_NakanoLab
             }
         }
 
-        private void LbBack_RemoveToolStripMenuItem_Click(object sender, EventArgs e) //背景画像リストを右クリックし、削除をクリックした時の処理
+        //背景画像リストを右クリックし、削除をクリックした時の処理
+        private void LbBack_RemoveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show(lbBack.Text + "を削除しますか？", "確認", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
@@ -231,6 +238,7 @@ namespace Chromakey_NakanoLab
             ck.bgIndex = lbBack.SelectedIndex;
         }
 
+        //印刷
         private void BtnPrint_Click(object sender, EventArgs e)
         {
             MessageBox.Show("プロパティから名刺サイズに選択してください。\nまた，縁無しにしないと全範囲印刷されません。");
@@ -387,6 +395,7 @@ namespace Chromakey_NakanoLab
             ck.TransY += 20;
         }
 
+        //画像の追加
         private void AddBackGround_Click(object sender, EventArgs e)
         {
             using (AddBackGround addbackground = new AddBackGround(bgxml))
